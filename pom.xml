@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.backmeup</groupId>
+    <artifactId>backmeup-storage</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <prerequisites>
+        <maven>3.0.3</maven>
+    </prerequisites>
+	
+	<name>Backmeup Storage</name>
+	<url>http://backmeup.at/</url>
+	<description>
+		The Backemup Storage is a service for storing backups and user data.
+	</description>
+
+    <modules>
+        <module>backmeup-storage-client</module>
+    </modules>
+
+    <properties>
+        <!-- Project settings -->
+        <java.compiler.source>1.7</java.compiler.source>
+        <java.compiler.target>1.7</java.compiler.target>
+        <project.build.java.target>1.7</project.build.java.target>
+
+        <encoding>UTF-8</encoding>
+        <project.build.sourceEncoding>${encoding}</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>${encoding}</project.reporting.outputEncoding>
+
+        <!-- Dependency versions
+             Please keep alphabetical
+             Properties should be in form "version.<groupId>", or in case where
+             multiple artefacts of the same groupId are used  "version.<groupId>.<artifactId>"
+        -->
+
+        <version.ch.qos.logback>1.1.2</version.ch.qos.logback>
+        <version.junit>4.11</version.junit>
+
+        <!-- Maven Plugin versions -->
+        <version.org.apache.maven.plugins.maven-compiler-plugin>3.1</version.org.apache.maven.plugins.maven-compiler-plugin>
+        <version.org.apache.maven.plugins.maven-dependency-plugin>2.8</version.org.apache.maven.plugins.maven-dependency-plugin>
+        <version.org.apache.maven.plugins.maven-failsafe-plugin>2.16</version.org.apache.maven.plugins.maven-failsafe-plugin>
+        <version.org.apache.maven.plugins.maven-resources-plugin>2.6</version.org.apache.maven.plugins.maven-resources-plugin>
+        <version.org.apache.maven.plugins.maven-surefire-plugin>2.6</version.org.apache.maven.plugins.maven-surefire-plugin>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${version.junit}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${version.org.apache.maven.plugins.maven-compiler-plugin}</version>
+                <configuration>
+                    <source>${java.compiler.source}</source>
+                    <target>${java.compiler.source}</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>${version.org.apache.maven.plugins.maven-resources-plugin}</version>
+                <configuration>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.2</version>
+                <!-- 
+                <configuration>
+                    <failOnWarning>true</failOnWarning>
+                </configuration> 
+                -->
+                <executions>
+                    <execution>
+                        <id>check-dependencies</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>analyze</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    
+    <repositories>
+    </repositories>
+</project>
