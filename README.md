@@ -1,4 +1,14 @@
-backmeup-storage
+Backmeup Storage
 ================
 
-BackMeUp v2 "Themis" Storage Service.
+This repository contains the BackMeUp Storage Service project. 
+
+## Build 
+
+## Installation
+
+## Contribute
+
+## Support
+
+## License 
