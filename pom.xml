@@ -40,7 +40,10 @@
         -->
 
         <version.ch.qos.logback>1.1.2</version.ch.qos.logback>
+		<version.javax.el>2.2</version.javax.el>
+		<version.javax.servlet>3.0.1</version.javax.servlet>
         <version.junit>4.11</version.junit>
+		<version.org.jboss.resteasy>3.0.9.Final</version.org.jboss.resteasy>
 
         <!-- Maven Plugin versions -->
         <version.org.apache.maven.plugins.maven-compiler-plugin>3.1</version.org.apache.maven.plugins.maven-compiler-plugin>
