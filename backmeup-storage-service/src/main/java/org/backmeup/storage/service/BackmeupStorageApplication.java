@@ -8,11 +8,11 @@ import javax.ws.rs.core.Application;
 import org.backmeup.storage.service.filters.TimingResourceFilter;
 import org.backmeup.storage.service.resources.Files;
 
-public class BackmeupStorageApplicaiton extends Application {
+public class BackmeupStorageApplication extends Application {
 	private final Set<Class<?>> set = new HashSet<>();
     private final Set<Object> singletons = new HashSet<>();
 
-    public BackmeupStorageApplicaiton() {
+    public BackmeupStorageApplication() {
         singletons.add(new Files());
 
         set.add(TimingResourceFilter.class);

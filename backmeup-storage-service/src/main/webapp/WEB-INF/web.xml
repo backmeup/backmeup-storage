@@ -11,7 +11,7 @@
 
         <init-param>
             <param-name>javax.ws.rs.Application</param-name>
-            <param-value>org.backmeup.storage.service.BackmeupStorageApplicaiton</param-value>
+            <param-value>org.backmeup.storage.service.BackmeupStorageApplication</param-value>
         </init-param>
         
         <load-on-startup>1</load-on-startup>
