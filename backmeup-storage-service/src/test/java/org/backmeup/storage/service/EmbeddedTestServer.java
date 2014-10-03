@@ -4,17 +4,24 @@ import org.jboss.resteasy.plugins.server.tjws.TJWSEmbeddedJaxrsServer;
 import org.junit.rules.ExternalResource;
 
 public class EmbeddedTestServer extends ExternalResource {
+	private final String HOST;
+	private final int PORT;
 
-	private static final String HOST = "http://localhost:";
-	private static final int PORT = 7654;
-
-	public final String host = HOST;
-	public final int port = PORT;
 	private final Class<?> resource;
 	private TJWSEmbeddedJaxrsServer server;
 
-	public EmbeddedTestServer(Class<?> resource) {
+	public EmbeddedTestServer(int port, Class<?> resource) {
+		this.HOST = "http://localhost";
+		this.PORT = port;
 		this.resource = resource;
+	}
+
+	public String getHost() {
+		return HOST;
+	}
+
+	public int getPort() {
+		return PORT;
 	}
 
 	@Override
