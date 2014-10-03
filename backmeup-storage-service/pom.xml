@@ -20,6 +20,12 @@
 			<version>${version.ch.qos.logback}</version>
 		</dependency>
 		<dependency>
+			<groupId>com.jayway.restassured</groupId>
+			<artifactId>rest-assured</artifactId>
+			<version>${version.com.jayway.restassured}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>javax.el</groupId>
 			<artifactId>el-api</artifactId>
 			<version>${version.javax.el}</version>
@@ -40,6 +46,17 @@
 			<groupId>org.jboss.resteasy</groupId>
 			<artifactId>resteasy-jackson-provider</artifactId>
 			<version>${version.org.jboss.resteasy}</version>
+		</dependency>
+		<dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>tjws</artifactId>
+            <version>${version.org.jboss.resteasy}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+			<groupId>org.jboss.weld.servlet</groupId>
+			<artifactId>weld-servlet</artifactId>
+			<version>${version.org.jboss.weld.servlet}</version>
 		</dependency>
 	</dependencies>
 </project>

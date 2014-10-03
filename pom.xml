@@ -11,16 +11,16 @@
     <prerequisites>
         <maven>3.0.3</maven>
     </prerequisites>
-	
-	<name>Backmeup Storage</name>
-	<url>http://backmeup.at/</url>
-	<description>
-		The Backemup Storage is a service for storing backups and user data.
-	</description>
+    
+    <name>Backmeup Storage</name>
+    <url>http://backmeup.at/</url>
+    <description>
+        The Backemup Storage is a service for storing backups and user data.
+    </description>
 
     <modules>
         <module>backmeup-storage-client</module>
-		<module>backmeup-storage-service</module>
+        <module>backmeup-storage-service</module>
     </modules>
 
     <properties>
@@ -40,10 +40,12 @@
         -->
 
         <version.ch.qos.logback>1.1.2</version.ch.qos.logback>
-		<version.javax.el>2.2</version.javax.el>
-		<version.javax.servlet>3.0.1</version.javax.servlet>
+        <version.com.jayway.restassured>2.3.3</version.com.jayway.restassured>
+        <version.javax.el>2.2</version.javax.el>
+        <version.javax.servlet>3.0.1</version.javax.servlet>
         <version.junit>4.11</version.junit>
-		<version.org.jboss.resteasy>3.0.9.Final</version.org.jboss.resteasy>
+        <version.org.jboss.resteasy>3.0.9.Final</version.org.jboss.resteasy>
+        <version.org.jboss.weld.servlet>2.2.5.Final</version.org.jboss.weld.servlet>
 
         <!-- Maven Plugin versions -->
         <version.org.apache.maven.plugins.maven-compiler-plugin>3.1</version.org.apache.maven.plugins.maven-compiler-plugin>
