@@ -18,27 +18,20 @@
         The Backemup Storage is a service for storing backups and user data.
     </description>
 
-    <modules>
-        <module>backmeup-storage-client</module>
-        <module>backmeup-storage-service</module>
-    </modules>
-
     <properties>
         <!-- Project settings -->
+        <encoding>UTF-8</encoding>
+        <project.build.sourceEncoding>${encoding}</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>${encoding}</project.reporting.outputEncoding>
         <java.compiler.source>1.7</java.compiler.source>
         <java.compiler.target>1.7</java.compiler.target>
         <project.build.java.target>1.7</project.build.java.target>
 
-        <encoding>UTF-8</encoding>
-        <project.build.sourceEncoding>${encoding}</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>${encoding}</project.reporting.outputEncoding>
-
         <!-- Dependency versions
              Please keep alphabetical
              Properties should be in form "version.<groupId>", or in case where
-             multiple artefacts of the same groupId are used  "version.<groupId>.<artifactId>"
+             multiple artifacts of the same groupId are used  "version.<groupId>.<artifactId>"
         -->
-
         <version.ch.qos.logback>1.1.2</version.ch.qos.logback>
         <version.com.jayway.restassured>2.3.3</version.com.jayway.restassured>
         <version.javax.el>2.2</version.javax.el>
@@ -52,20 +45,30 @@
         <version.org.apache.maven.plugins.maven-dependency-plugin>2.8</version.org.apache.maven.plugins.maven-dependency-plugin>
         <version.org.apache.maven.plugins.maven-failsafe-plugin>2.16</version.org.apache.maven.plugins.maven-failsafe-plugin>
         <version.org.apache.maven.plugins.maven-resources-plugin>2.6</version.org.apache.maven.plugins.maven-resources-plugin>
+        <version.org.apache.maven.plugins.maven-source-plugin>2.2</version.org.apache.maven.plugins.maven-source-plugin>
         <version.org.apache.maven.plugins.maven-surefire-plugin>2.6</version.org.apache.maven.plugins.maven-surefire-plugin>
     </properties>
 
-    <dependencies>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${version.junit}</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
+    <modules>
+        <module>backmeup-storage-client</module>
+        <module>backmeup-storage-service</module>
+    </modules>
 
     <build>
         <plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>${version.org.apache.maven.plugins.maven-source-plugin}</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -105,7 +108,15 @@
             </plugin>
         </plugins>
     </build>
-    
-    <repositories>
-    </repositories>
+
+    <!-- all modules use -->
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${version.junit}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
 </project>
