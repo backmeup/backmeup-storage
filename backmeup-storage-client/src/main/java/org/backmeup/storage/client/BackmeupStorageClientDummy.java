@@ -37,7 +37,8 @@ public class BackmeupStorageClientDummy implements StorageClient {
 	/**
 	 * Upload file data to the Backmeup-Storage
 	 */
-	public void saveFile (String targetPath, boolean overwrite, long numBytes, InputStream data) throws IOException {
+	@Override
+    public void saveFile (String targetPath, boolean overwrite, long numBytes, InputStream data) throws IOException {
 		if (data != null) {
 			String filePath = getStorageHome() + userId + targetPath;
 			if (!overwrite) {
@@ -53,7 +54,8 @@ public class BackmeupStorageClientDummy implements StorageClient {
 	/**
 	 * Retrieves a file's data and writes it to the the given OutputStream
 	 */
-	public File getFile (String path, OutputStream data) throws IOException {
+	@Override
+    public File getFile (String path, OutputStream data) throws IOException {
 		String filePath = getStorageHome() + userId + path;
 		File file = new File(filePath);
 		if (file.exists() && file.canRead()) {

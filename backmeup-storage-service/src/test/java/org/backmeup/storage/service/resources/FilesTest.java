@@ -24,14 +24,12 @@ public class FilesTest {
 	
 	@Rule
 	public final EmbeddedTestServer SERVER = new EmbeddedTestServer(PORT, FilesWithMockedLogic.class);
-	
 		
 	private static final URL FILE_URL = FilesTest.class.getResource("/file.txt");
 	private static final File FILE = new File(FILE_URL.getFile());
-
 	
 	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {			
+	public static void setUpBeforeClass() {			
 		RestAssured.baseURI = HOST;
 		RestAssured.port = PORT;
 		RestAssured.defaultParser = Parser.JSON;
@@ -45,12 +43,10 @@ public class FilesTest {
 
 	@Test
 	public void testPutFileNoOverwrite() {
-
 	}
 
 	@Test
 	public void testPutFileOverwrite() {
-
 	}
 
 	@Test

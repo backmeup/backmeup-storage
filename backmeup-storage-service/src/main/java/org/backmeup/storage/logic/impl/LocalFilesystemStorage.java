@@ -40,7 +40,7 @@ public class LocalFilesystemStorage implements StorageLogic {
 	@Override
 	public Metadata saveFile(String filePath, boolean overwrite, long contentLength, InputStream content) {
 		File file = new File(BASE_PATH + filePath);
-		if (file != null  && file.exists() && !overwrite) {
+		if (file.exists() && !overwrite) {
 			throw new WebApplicationException(Status.CONFLICT);
 		}
 		
