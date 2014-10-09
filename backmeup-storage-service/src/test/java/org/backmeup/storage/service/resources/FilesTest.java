@@ -3,7 +3,8 @@ package org.backmeup.storage.service.resources;
 import static com.jayway.restassured.RestAssured.given;
 
 import java.io.File;
-import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.http.HttpResponse;
 import org.backmeup.storage.logic.StorageLogic;
@@ -25,8 +26,7 @@ public class FilesTest {
 	@Rule
 	public final EmbeddedTestServer SERVER = new EmbeddedTestServer(PORT, FilesWithMockedLogic.class);
 		
-	private static final URL FILE_URL = FilesTest.class.getResource("/file.txt");
-	private static final File FILE = new File(FILE_URL.getFile());
+	private static final File FILE = new File(FilesTest.class.getResource("/file.txt").getFile());
 	
 	@BeforeClass
 	public static void setUpBeforeClass() {			
@@ -51,36 +51,26 @@ public class FilesTest {
 
 	@Test
 	public void testGetFileSimplePath() {
-//		ValidatableResponse response = null;
-		try {
-//			response = 
-			given()
-				.log().all()
-			.when()
-				.get("/files/file.txt")
-			.then()
-				.log().all()
-				.statusCode(200);
-		} finally {
-			
-		}
+//		ValidatableResponse response = 
+		given()
+			.log().all()
+		.when()
+			.get("/files/file.txt")
+		.then()
+			.log().all()
+			.statusCode(200);
 	}
 	
 	@Test
 	public void testGetFileLongPath() {
-//		ValidatableResponse response = null;
-		try {
-//			response = 
-			given()
-				.log().all()
-			.when()
-				.get("/files/path/to/file.txt")
-			.then()
-				.log().all()
-				.statusCode(200);
-		} finally {
-			
-		}
+//		ValidatableResponse response = 
+		given()
+			.log().all()
+		.when()
+			.get("/files/path/to/file.txt")
+		.then()
+			.log().all()
+			.statusCode(200);
 	}
 
 	private void assertStatusCode(int expectedStatus, HttpResponse response) {
@@ -93,7 +83,11 @@ public class FilesTest {
 	public static class FilesWithMockedLogic extends Files {
 		@Override
 		public StorageLogic getStorageLogic() {
-			StorageLogic logic = new DummyStorage(FILE);
+		    Map<String, File> map = new HashMap<>();
+		    map.put(FILE.getName(), FILE);
+		    map.put("path/to/file.txt", FILE);
+		    
+			StorageLogic logic = new DummyStorage(map);
 			return logic;
 		}
 	}

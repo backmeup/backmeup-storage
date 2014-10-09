@@ -34,7 +34,7 @@ public class Files {
 	}
 
 	@GET
-    @Path("/{path}")
+    @Path("/{path:[^/]+.*}")
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
 	public Response getFile(@PathParam("path") String filePath) {
 		File file = getStorageLogic().getFile(filePath);
@@ -48,7 +48,7 @@ public class Files {
 	}
 	
 	@PUT
-    @Path("/{path}")
+    @Path("/{path:[^/]+.*}")
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
 	public Response putFile(@Context HttpServletRequest request, 
 							@PathParam("path") String filePath, 
