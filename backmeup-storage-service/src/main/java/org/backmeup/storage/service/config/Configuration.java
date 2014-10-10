@@ -20,6 +20,10 @@ public final class Configuration {
             throw new ExceptionInInitializerError(e);
         }
     }
+    
+    private Configuration() {
+    	// Configuration is a utility class, therefore private constructor
+    }
 
     public static String getProperty(String key) {
         return properties.getProperty(key);
