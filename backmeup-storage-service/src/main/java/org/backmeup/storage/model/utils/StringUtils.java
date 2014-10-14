@@ -25,15 +25,4 @@ public class StringUtils {
 		}
 		return new String(hex, "ASCII");
 	}
-
-	public static void main(String args[]) throws Exception {
-		byte[] byteArray = { (byte) 255, (byte) 254, (byte) 253, (byte) 252,
-				(byte) 251, (byte) 250 };
-
-		System.out.println(StringUtils.getHexString(byteArray));
-
-		/*
-		 * output : fffefdfcfbfa
-		 */
-	}
 }
