@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 
 @RequestScoped
 public class LocalFilesystemStorage implements StorageLogic {
-	private final Logger LOGGER = LoggerFactory.getLogger(getClass());
+	private static final Logger LOGGER = LoggerFactory.getLogger(LocalFilesystemStorage.class);
 	private static final String BASE_PATH = Configuration.getProperty("backmeup.storage.home");
 	private static final String DIGEST_ALGORITHM = "MD5";
 	
