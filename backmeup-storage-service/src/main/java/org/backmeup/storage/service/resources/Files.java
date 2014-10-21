@@ -24,7 +24,6 @@ import org.backmeup.storage.model.dto.Metadata;
 
 @Path("/files")
 public class Files {
-//	private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 	
 	@Inject
 	private StorageLogic storageLogic;

@@ -74,7 +74,6 @@ public class LocalFilesystemStorage implements StorageLogic {
 			LOGGER.error("", e);
 			hash = "-1";
 		}
-		Metadata fileMetadata = new Metadata(totalLength, hash, new Date(), filePath);
-		return fileMetadata;
+		return new Metadata(totalLength, hash, new Date(), filePath);
 	}
 }

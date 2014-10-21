@@ -82,10 +82,12 @@ public class BackmeupStorageClientDummy implements StorageClient {
 		if (homePath != null && homePath.length() > 0 && !homePath.contains("\"")) {
 			File f = new File(homePath);
 			if (!f.isDirectory()) {
-				throw new ExceptionInInitializerError("User home must point to a directory");
+				throw new ExceptionInInitializerError("User home must point to a directory: " + f);
 			}
 			if (!f.exists()) {
-				f.mkdirs();
+				if (!f.mkdirs()) {
+	                throw new ExceptionInInitializerError("Can not create directory: " + f);
+				}
 			}
 			return f.getAbsolutePath();
 		}
