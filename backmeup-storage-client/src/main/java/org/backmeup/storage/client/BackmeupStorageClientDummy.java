@@ -11,10 +11,11 @@ import java.nio.file.StandardOpenOption;
 import java.util.StringTokenizer;
 
 import org.backmeup.storage.client.config.Configuration;
+import org.backmeup.storage.model.Metadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class BackmeupStorageClientDummy implements StorageClient {
+public class BackmeupStorageClientDummy /*implements StorageClient*/ {
     private static final Logger LOGGER = LoggerFactory.getLogger(BackmeupStorageClientDummy.class);
 
     private String accessToken;
@@ -37,8 +38,7 @@ public class BackmeupStorageClientDummy implements StorageClient {
     /**
      * Upload file data to the Backmeup-Storage
      */
-    @Override
-    public void saveFile (String targetPath, boolean overwrite, long numBytes, InputStream data) throws IOException {
+    public Metadata saveFile (String targetPath, boolean overwrite, long numBytes, InputStream data) throws IOException {
         if (data != null) {
             String filePath = getStorageHome() + userId + targetPath;
             if (!overwrite) {
@@ -49,18 +49,19 @@ public class BackmeupStorageClientDummy implements StorageClient {
                         StandardCopyOption.REPLACE_EXISTING);
             }
         }
+        return null;
     }
 
     /**
      * Retrieves a file's data and writes it to the the given OutputStream
      */
-    @Override
-    public File getFile (String path, OutputStream data) throws IOException {
+    public Metadata getFile (String path, OutputStream data) throws IOException {
         String filePath = getStorageHome() + userId + path;
         File file = new File(filePath);
         if (file.exists() && file.canRead()) {
             Files.newOutputStream(Paths.get(filePath), StandardOpenOption.READ);
-            return file;
+//            return file;
+            return null;
         }
         throw new IOException("File not found or accessible: " + filePath);
     }
