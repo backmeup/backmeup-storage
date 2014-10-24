@@ -9,20 +9,10 @@
 		<relativePath>..\pom.xml</relativePath>
 	</parent>
 	
-	<artifactId>backmeup-storage-client</artifactId>
+	<artifactId>backmeup-storage-model</artifactId>
 	<packaging>jar</packaging>
-	<name>Backmeup Storage Client</name>
+	<name>Backmeup Storage Model</name>
 	
 	<dependencies>
-		<dependency>
-			<groupId>org.backmeup</groupId>
-			<artifactId>backmeup-storage-model</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-classic</artifactId>
-			<version>${version.ch.qos.logback}</version>
-		</dependency> 
 	</dependencies>
 </project>

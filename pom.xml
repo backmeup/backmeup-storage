@@ -51,6 +51,7 @@
 
     <modules>
         <module>backmeup-storage-client</module>
+		<module>backmeup-storage-model</module>
         <module>backmeup-storage-service</module>
     </modules>
 
