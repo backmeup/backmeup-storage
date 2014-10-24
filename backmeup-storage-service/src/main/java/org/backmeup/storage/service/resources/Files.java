@@ -20,7 +20,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.backmeup.storage.logic.StorageLogic;
-import org.backmeup.storage.model.dto.Metadata;
+import org.backmeup.storage.model.Metadata;
 
 @Path("/files")
 public class Files {

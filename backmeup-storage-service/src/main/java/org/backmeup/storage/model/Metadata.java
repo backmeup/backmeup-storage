@@ -1,4 +1,4 @@
-package org.backmeup.storage.model.dto;
+package org.backmeup.storage.model;
 
 import java.util.Date;
 

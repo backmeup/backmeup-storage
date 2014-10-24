@@ -3,7 +3,8 @@ package org.backmeup.storage.logic;
 import java.io.File;
 import java.io.InputStream;
 
-import org.backmeup.storage.model.dto.Metadata;
+import org.backmeup.storage.model.Metadata;
+
 
 public interface StorageLogic {
 	File getFile(String path);

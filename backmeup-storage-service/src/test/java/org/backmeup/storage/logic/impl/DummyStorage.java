@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.backmeup.storage.logic.StorageLogic;
-import org.backmeup.storage.model.dto.Metadata;
+import org.backmeup.storage.model.Metadata;
 
 public class DummyStorage implements StorageLogic {
     private final Map<String, File> files;

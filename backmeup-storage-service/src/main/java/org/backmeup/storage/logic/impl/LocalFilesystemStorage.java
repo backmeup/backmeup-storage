@@ -15,7 +15,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response.Status;
 
 import org.backmeup.storage.logic.StorageLogic;
-import org.backmeup.storage.model.dto.Metadata;
+import org.backmeup.storage.model.Metadata;
 import org.backmeup.storage.model.utils.StringUtils;
 import org.backmeup.storage.service.config.Configuration;
 import org.slf4j.Logger;
