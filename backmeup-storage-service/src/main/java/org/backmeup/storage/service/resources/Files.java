@@ -3,8 +3,10 @@ package org.backmeup.storage.service.resources;
 import java.io.File;
 import java.io.IOException;
 
+import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -21,6 +23,7 @@ import javax.ws.rs.core.Response.Status;
 
 import org.backmeup.storage.logic.StorageLogic;
 import org.backmeup.storage.model.Metadata;
+import org.backmeup.storage.service.auth.AuthRoles;
 
 @Path("/files")
 public class Files {
@@ -32,6 +35,7 @@ public class Files {
         return storageLogic;
     }
 
+    @RolesAllowed(AuthRoles.USER)
     @GET
     @Path("/{path:[^/]+.*}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
@@ -46,9 +50,11 @@ public class Files {
                         "attachment; filename=" + file.getName()).build();
     }
 
+    @RolesAllowed(AuthRoles.USER)
     @PUT
     @Path("/{path:[^/]+.*}")
-    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    @Consumes(MediaType.APPLICATION_OCTET_STREAM)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response putFile(@Context HttpServletRequest request, 
             @PathParam("path") String filePath, 
             @QueryParam("overwrite") @DefaultValue("false") boolean overwrite,
