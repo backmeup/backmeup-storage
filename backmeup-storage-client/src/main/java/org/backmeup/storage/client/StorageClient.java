@@ -6,7 +6,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 public interface StorageClient {
-	void saveFile(String targetPath, boolean overwrite, long numBytes, InputStream data) throws IOException;
-	
-	File getFile(String path, OutputStream data) throws IOException;
+    void saveFile(String targetPath, boolean overwrite, long numBytes, InputStream data) throws IOException;
+
+    File getFile(String path, OutputStream data) throws IOException;
 }

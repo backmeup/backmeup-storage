@@ -3,7 +3,7 @@ package org.backmeup.storage.model;
 import java.util.Date;
 
 public class Metadata {
-    
+
     private final String humanReadableFileSize;
     private final long bytes;
     private final String hash;
