@@ -24,40 +24,40 @@ import org.backmeup.storage.model.Metadata;
 
 @Path("/files")
 public class Files {
-	
-	@Inject
-	private StorageLogic storageLogic;
-	
-	public StorageLogic getStorageLogic() {
-		return storageLogic;
-	}
 
-	@GET
+    @Inject
+    private StorageLogic storageLogic;
+
+    public StorageLogic getStorageLogic() {
+        return storageLogic;
+    }
+
+    @GET
     @Path("/{path:[^/]+.*}")
-	@Produces(MediaType.APPLICATION_OCTET_STREAM)
-	public Response getFile(@PathParam("path") String filePath) {
-		File file = getStorageLogic().getFile(filePath);
-		if (file == null || !file.exists()) {
-			throw new WebApplicationException(Status.NOT_FOUND);
-		}
-		return Response
-				.ok(file)
-				.header("Content-Disposition",
-						"attachment; filename=" + file.getName()).build();
-	}
-	
-	@PUT
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    public Response getFile(@PathParam("path") String filePath) {
+        File file = getStorageLogic().getFile(filePath);
+        if (file == null || !file.exists()) {
+            throw new WebApplicationException(Status.NOT_FOUND);
+        }
+        return Response
+                .ok(file)
+                .header("Content-Disposition",
+                        "attachment; filename=" + file.getName()).build();
+    }
+
+    @PUT
     @Path("/{path:[^/]+.*}")
-	@Produces(MediaType.APPLICATION_OCTET_STREAM)
-	public Response putFile(@Context HttpServletRequest request, 
-							@PathParam("path") String filePath, 
-							@QueryParam("overwrite") @DefaultValue("false") boolean overwrite,
-							@HeaderParam("Content-Length") long contentLength) throws IOException {
-		if (contentLength <= 0) {
-			throw new WebApplicationException(Status.LENGTH_REQUIRED);
-		}
-		
-		Metadata fileMetadata = getStorageLogic().saveFile(filePath, overwrite, contentLength, request.getInputStream());
-		return Response.ok(fileMetadata).build();
-	}
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    public Response putFile(@Context HttpServletRequest request, 
+            @PathParam("path") String filePath, 
+            @QueryParam("overwrite") @DefaultValue("false") boolean overwrite,
+            @HeaderParam("Content-Length") long contentLength) throws IOException {
+        if (contentLength <= 0) {
+            throw new WebApplicationException(Status.LENGTH_REQUIRED);
+        }
+
+        Metadata fileMetadata = getStorageLogic().saveFile(filePath, overwrite, contentLength, request.getInputStream());
+        return Response.ok(fileMetadata).build();
+    }
 }

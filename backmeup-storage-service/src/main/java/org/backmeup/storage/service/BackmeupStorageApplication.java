@@ -9,7 +9,7 @@ import org.backmeup.storage.service.filters.TimingResourceFilter;
 import org.backmeup.storage.service.resources.Files;
 
 public class BackmeupStorageApplication extends Application {
-	private final Set<Class<?>> set = new HashSet<>();
+    private final Set<Class<?>> set = new HashSet<>();
     private final Set<Object> singletons = new HashSet<>();
 
     public BackmeupStorageApplication() {

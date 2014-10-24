@@ -7,7 +7,7 @@ import org.backmeup.storage.model.Metadata;
 
 
 public interface StorageLogic {
-	File getFile(String path);
-	
-	Metadata saveFile(String filePath, boolean overwrite, long contentLength, InputStream content);
+    File getFile(String path);
+
+    Metadata saveFile(String filePath, boolean overwrite, long contentLength, InputStream content);
 }
