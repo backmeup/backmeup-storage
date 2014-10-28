@@ -75,7 +75,7 @@
             <id>integration-tests</id>
             <activation>
                 <property>
-                    <name>!skipTests</name>
+                    <name>integrationTests</name>
                 </property>
             </activation>
             <build>
