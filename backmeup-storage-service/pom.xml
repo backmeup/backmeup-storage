@@ -49,6 +49,11 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-cdi</artifactId>
+            <version>${version.org.jboss.resteasy}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.resteasy</groupId>
             <artifactId>resteasy-jackson-provider</artifactId>
             <version>${version.org.jboss.resteasy}</version>
         </dependency>
@@ -64,4 +69,42 @@
             <version>${version.org.jboss.weld.servlet}</version>
         </dependency>
     </dependencies>
+    
+    <profiles>
+        <profile>
+            <id>integration-tests</id>
+            <activation>
+                <property>
+                    <name>!skipTests</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.tomcat.maven</groupId>
+                        <artifactId>tomcat7-maven-plugin</artifactId>
+                        <version>${version.org.apache.tomcat.maven}</version>
+                        <configuration>
+                            <url>${config.tomcat.manager.url}</url>
+                            <!-- Don't forget to specify the server in the settings.xml -->
+                            <server>${config.tomcat.authentication.id}</server>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>tomcat-deploy</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>deploy</goal>
+                                </goals>
+                                <configuration>
+                                    <update>true</update>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+    
 </project>

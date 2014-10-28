@@ -26,6 +26,10 @@
         <java.compiler.source>1.7</java.compiler.source>
         <java.compiler.target>1.7</java.compiler.target>
         <project.build.java.target>1.7</project.build.java.target>
+        
+        <!-- Configuration -->
+        <config.tomcat.manager.url>http://127.0.0.1:8080/manager/text</config.tomcat.manager.url>
+        <config.tomcat.authentication.id>backmeup.storage.tomcat</config.tomcat.authentication.id>
 
         <!-- Dependency versions
              Please keep alphabetical
@@ -47,6 +51,7 @@
         <version.org.apache.maven.plugins.maven-resources-plugin>2.6</version.org.apache.maven.plugins.maven-resources-plugin>
         <version.org.apache.maven.plugins.maven-source-plugin>2.2</version.org.apache.maven.plugins.maven-source-plugin>
         <version.org.apache.maven.plugins.maven-surefire-plugin>2.6</version.org.apache.maven.plugins.maven-surefire-plugin>
+        <version.org.apache.tomcat.maven>2.2</version.org.apache.tomcat.maven>
     </properties>
 
     <modules>
