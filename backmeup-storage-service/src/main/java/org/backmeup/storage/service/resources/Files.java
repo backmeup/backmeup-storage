@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.annotation.security.RolesAllowed;
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -20,14 +21,22 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.SecurityContext;
 
 import org.backmeup.storage.logic.StorageLogic;
 import org.backmeup.storage.model.Metadata;
+import org.backmeup.storage.model.StorageUser;
 import org.backmeup.storage.service.auth.AuthRoles;
+import org.backmeup.storage.service.auth.UserPrincipal;
 
 @Path("/files")
+@RequestScoped
 public class Files {
-
+    
+    public Files() {
+        
+    }
+    
     @Inject
     private StorageLogic storageLogic;
 
@@ -39,8 +48,11 @@ public class Files {
     @GET
     @Path("/{path:[^/]+.*}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    public Response getFile(@PathParam("path") String filePath) {
-        File file = getStorageLogic().getFile(filePath);
+    public Response getFile(@PathParam("path") String filePath, @Context SecurityContext securityContext) {
+        StorageUser user = getUserFromContext(securityContext);
+        String userFilePath = getUserFilePath(filePath, user);
+        
+        File file = getStorageLogic().getFile(userFilePath);
         if (file == null || !file.exists()) {
             throw new WebApplicationException(Status.NOT_FOUND);
         }
@@ -55,15 +67,32 @@ public class Files {
     @Path("/{path:[^/]+.*}")
     @Consumes(MediaType.APPLICATION_OCTET_STREAM)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response putFile(@Context HttpServletRequest request, 
+    public Response putFile( 
             @PathParam("path") String filePath, 
             @QueryParam("overwrite") @DefaultValue("false") boolean overwrite,
-            @HeaderParam("Content-Length") long contentLength) throws IOException {
+            @HeaderParam("Content-Length") long contentLength,
+            @Context HttpServletRequest request,
+            @Context SecurityContext securityContext) throws IOException {
         if (contentLength <= 0) {
             throw new WebApplicationException(Status.LENGTH_REQUIRED);
         }
+        
+        StorageUser user = getUserFromContext(securityContext);
+        String userFilePath = getUserFilePath(filePath, user);
 
-        Metadata fileMetadata = getStorageLogic().saveFile(filePath, overwrite, contentLength, request.getInputStream());
+        Metadata fileMetadata = getStorageLogic().saveFile(userFilePath, overwrite, contentLength, request.getInputStream());
         return Response.ok(fileMetadata).build();
+    }
+    
+    protected StorageUser getUserFromContext(SecurityContext context) {
+        StorageUser activeUser = ((UserPrincipal) context.getUserPrincipal()).getUser();
+        if (activeUser.getUserId() == null) {
+            throw new WebApplicationException(Status.FORBIDDEN);
+        }
+        return activeUser;
+    }
+    
+    protected String getUserFilePath(String filePath, StorageUser user) {
+        return "/" + user.getUserId() + "/" + filePath;
     }
 }

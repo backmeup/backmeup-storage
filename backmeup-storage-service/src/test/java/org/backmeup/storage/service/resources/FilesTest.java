@@ -6,9 +6,12 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.ws.rs.core.SecurityContext;
+
 import org.apache.http.HttpResponse;
 import org.backmeup.storage.logic.StorageLogic;
 import org.backmeup.storage.logic.impl.DummyStorage;
+import org.backmeup.storage.model.StorageUser;
 import org.backmeup.storage.service.EmbeddedTestServer;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -89,6 +92,17 @@ public class FilesTest {
 
             StorageLogic logic = new DummyStorage(map);
             return logic;
+        }
+        
+        @Override
+        protected StorageUser getUserFromContext(SecurityContext context) {
+            StorageUser dummy = new StorageUser(1L);
+            return dummy;
+        }
+        
+        @Override
+        protected String getUserFilePath(String filePath, StorageUser user) {
+            return filePath;
         }
     }
 }

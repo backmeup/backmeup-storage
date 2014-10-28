@@ -6,11 +6,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 
 import javax.enterprise.context.RequestScoped;
+import javax.inject.Named;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response.Status;
 
@@ -21,6 +24,7 @@ import org.backmeup.storage.service.config.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Named
 @RequestScoped
 public class LocalFilesystemStorage implements StorageLogic {
     private static final Logger LOGGER = LoggerFactory.getLogger(LocalFilesystemStorage.class);
@@ -34,12 +38,18 @@ public class LocalFilesystemStorage implements StorageLogic {
 
     @Override
     public File getFile(String path) {
-        return new File(BASE_PATH + path);
+        final String completePath = BASE_PATH + path;
+        final Path filePath = Paths.get(completePath);
+        
+        return new File(filePath.toAbsolutePath().toString());
     }
 
     @Override
     public Metadata saveFile(String filePath, boolean overwrite, long contentLength, InputStream content) {
-        File file = new File(BASE_PATH + filePath);
+        final String completePath = BASE_PATH + filePath;
+        final Path path = Paths.get(completePath);
+
+        File file = new File(path.toAbsolutePath().toString());
         if (file.exists() && !overwrite) {
             throw new WebApplicationException(Status.CONFLICT);
         }
@@ -52,6 +62,13 @@ public class LocalFilesystemStorage implements StorageLogic {
             throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
         }
         long totalLength = 0;
+
+        File parent = new File(path.getParent().toAbsolutePath().toString());
+        parent.mkdirs();
+
+        if (!file.canWrite()) {
+            file.setWritable(true);
+        }
 
         try (OutputStream out = new FileOutputStream(file);) {
             InputStream in = content;
