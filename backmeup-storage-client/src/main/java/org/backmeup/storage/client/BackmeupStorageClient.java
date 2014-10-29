@@ -24,12 +24,12 @@ public class BackmeupStorageClient implements StorageClient {
     
     private final String serviceUrl = Configuration.getProperty("backmeup.storage.service.url");
 
-    private final CloseableHttpClient CLIENT;
+    private final CloseableHttpClient client;
 
     // Constructors -----------------------------------------------------------
 
     public BackmeupStorageClient() {
-        this.CLIENT = HttpClients.createDefault();
+        this.client = HttpClients.createDefault();
     }
 
     // Public Methods ---------------------------------------------------------
@@ -53,7 +53,7 @@ public class BackmeupStorageClient implements StorageClient {
 //        reqEntity.setChunked(true);
         request.setEntity(reqEntity);
 
-        CloseableHttpResponse response = CLIENT.execute(request);
+        CloseableHttpResponse response = client.execute(request);
         int status = response.getStatusLine().getStatusCode();
         if (HttpStatus.SC_OK != status) {
             LOGGER.error("Request failed with status code: " + status);
@@ -78,7 +78,7 @@ public class BackmeupStorageClient implements StorageClient {
     public void getFile(String accessToken, String path, OutputStream data) throws IOException {
         HttpGet httpGet = new HttpGet(serviceUrl + path);
         httpGet.addHeader("Authorization", accessToken);
-        CloseableHttpResponse response = CLIENT.execute(httpGet);
+        CloseableHttpResponse response = client.execute(httpGet);
 
         int status = response.getStatusLine().getStatusCode();
         if (HttpStatus.SC_OK != status) {

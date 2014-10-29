@@ -9,10 +9,8 @@ import java.util.Set;
 import javax.annotation.security.DenyAll;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
-import javax.servlet.ServletContext;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.Provider;
 
@@ -30,13 +28,7 @@ public class SecurityInterceptor implements ContainerRequestFilter {
     private static final ServerResponse ACCESS_DENIED = new ServerResponse("Access denied for this resource", 401, new Headers<>());
     private static final String AUTHORIZATION_PROPERTY = "Authorization";
 
-    public static final Long BACKMEUP_WORKER_ID = -1L;
-    public static final String BACKMEUP_WORKER_NAME = "BACKMEUPWORKER";
-
-    private final Logger LOGGER = LoggerFactory.getLogger(getClass());
-
-    @Context
-    private ServletContext context;
+    private static final Logger LOGGER = LoggerFactory.getLogger(SecurityInterceptor.class);
 
     @Override
     public void filter(ContainerRequestContext requestContext) {
