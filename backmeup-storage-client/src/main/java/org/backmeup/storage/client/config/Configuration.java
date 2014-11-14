@@ -18,8 +18,7 @@ public final class Configuration {
     static {
         InputStream propsStream = null;
         try {
-            ClassLoader loader = Thread.currentThread().getContextClassLoader();
-            propsStream = loader.getResourceAsStream(PROPERTYFILE);
+            propsStream = Configuration.class.getClassLoader().getResourceAsStream(PROPERTYFILE);
             if (propsStream != null) {
                 PROPERTIES.load(propsStream);
             } else {

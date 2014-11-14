@@ -12,6 +12,7 @@ import org.backmeup.storage.model.Metadata;
 public class DummyStorage implements StorageLogic {
     private final Map<String, File> files;
 
+    @SuppressWarnings("serial")
     public DummyStorage(final File file) {
         this(new HashMap<String, File>() {
             @Override
