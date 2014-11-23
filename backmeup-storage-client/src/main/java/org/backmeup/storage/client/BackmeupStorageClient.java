@@ -22,13 +22,22 @@ import org.slf4j.LoggerFactory;
 public class BackmeupStorageClient implements StorageClient {
     private static final Logger LOGGER = LoggerFactory.getLogger(BackmeupStorageClient.class);
     
-    private final String serviceUrl = Configuration.getProperty("backmeup.storage.service.url");
+    private static final String REGEX_MATCH_DOUBLE_SLASH = "(?<!(http:|https:))//";
+    
+    private static final String FILE_RESOURCE = "/files";
+    
+    private final String serviceUrl;
 
     private final CloseableHttpClient client;
 
     // Constructors -----------------------------------------------------------
 
     public BackmeupStorageClient() {
+        this(Configuration.getProperty("backmeup.storage.service.url"));
+    }
+    
+    public BackmeupStorageClient(String serviceUrl) {
+        this.serviceUrl = serviceUrl;
         this.client = HttpClients.createDefault();
     }
 
@@ -40,13 +49,16 @@ public class BackmeupStorageClient implements StorageClient {
         
         StringBuilder sb = new StringBuilder();
         sb.append(serviceUrl);
+        sb.append("FILE_RESOURCE");
         sb.append(targetPath);
         if(overwrite){
             sb.append("?overwrite=");
             sb.append(overwrite);
         }
+        String url = sb.toString();
+        url = url.replaceAll(REGEX_MATCH_DOUBLE_SLASH, "/");
         
-        HttpPut request = new HttpPut(sb.toString());
+        HttpPut request = new HttpPut(url);
         request.setHeader("Accept", "application/json");
         request.setHeader("Authorization", accessToken);
         InputStreamEntity reqEntity = new InputStreamEntity(data, numBytes, ContentType.APPLICATION_OCTET_STREAM);
@@ -76,7 +88,9 @@ public class BackmeupStorageClient implements StorageClient {
 
     @Override
     public void getFile(String accessToken, String path, OutputStream data) throws IOException {
-        HttpGet httpGet = new HttpGet(serviceUrl + path);
+        String url = serviceUrl + FILE_RESOURCE + path;
+        url = url.replaceAll(REGEX_MATCH_DOUBLE_SLASH, "/");
+        HttpGet httpGet = new HttpGet(url);
         httpGet.addHeader("Authorization", accessToken);
         CloseableHttpResponse response = client.execute(httpGet);
 
