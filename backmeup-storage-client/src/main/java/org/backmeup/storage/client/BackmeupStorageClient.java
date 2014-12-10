@@ -49,7 +49,7 @@ public class BackmeupStorageClient implements StorageClient {
         
         StringBuilder sb = new StringBuilder();
         sb.append(serviceUrl);
-        sb.append("FILE_RESOURCE");
+        sb.append(FILE_RESOURCE);
         sb.append(targetPath);
         if(overwrite){
             sb.append("?overwrite=");
