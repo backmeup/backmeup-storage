@@ -4,7 +4,7 @@ import java.util.Date;
 
 public class Metadata {
 
-    private final String humanReadableFileSize;
+    private final String size;
     private final long bytes;
     private final String hash;
     private final Date modified;
@@ -14,15 +14,15 @@ public class Metadata {
     public Metadata(long bytes, String hash, Date modified, String path) {
         super();
         this.bytes = bytes;
-        this.humanReadableFileSize = humanReadableByteCount(bytes, true);
+        this.size = humanReadableByteCount(bytes, true);
         this.hash = hash;
         this.modified = modified;
         this.path = path;
         this.isDir = false;
     }
 
-    public String getHumanReadableFileSize() {
-        return humanReadableFileSize;
+    public String getSize() {
+        return size;
     }
 
     public long getBytes() {
