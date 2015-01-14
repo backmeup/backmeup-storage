@@ -5,6 +5,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import org.backmeup.storage.api.StorageClient;
+
 public class ClientTest {
     public static void main(String[] args) throws IOException {
         StorageClient client = new BackmeupStorageClient();
