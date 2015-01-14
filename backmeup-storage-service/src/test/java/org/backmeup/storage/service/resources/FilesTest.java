@@ -8,13 +8,11 @@ import java.util.Map;
 
 import javax.ws.rs.core.SecurityContext;
 
-import org.apache.http.HttpResponse;
 import org.backmeup.storage.logic.StorageLogic;
 import org.backmeup.storage.logic.impl.DummyStorage;
 import org.backmeup.storage.model.StorageUser;
 import org.backmeup.storage.service.EmbeddedTestServer;
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -74,11 +72,6 @@ public class FilesTest {
         .then()
         .log().all()
         .statusCode(200);
-    }
-
-    private void assertStatusCode(int expectedStatus, HttpResponse response) {
-        int responseCode = response.getStatusLine().getStatusCode();
-        Assert.assertEquals(expectedStatus, responseCode);
     }
 
     // Mocks ------------------------------------------------------------------
