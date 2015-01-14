@@ -30,6 +30,13 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${version.com.fasterxml.jackson.core}</version>
+        </dependency>
+        
+        
         <!-- Transitive osgi dependenies for httpclient-osgi 
              Since we want to embed them in the bundle, we have 
              to declare them (although we don't use them)
@@ -69,10 +76,28 @@
                         <Bundle-Name>${project.name}</Bundle-Name>
                         <Bundle-Version>${project.version}</Bundle-Version>
                         <Import-Package>
-                            javax.crypto,javax.crypto.spec,javax.naming,javax.naming.directory,javax.naming.ldap,
-                            javax.net,javax.net.ssl,javax.security.auth.x500,org.ietf.jgss,org.osgi.framework,
-                            org.osgi.service.cm,org.slf4j,org.slf4j.spi,
-                            net.sf.ehcache.*;resolution:=optional,net.spy.memcached.*;resolution:=optional,
+                            javax.crypto,
+                            javax.crypto.spec,
+                            javax.naming,
+                            javax.naming.directory,
+                            javax.naming.ldap,
+                            javax.net,
+                            javax.net.ssl,
+                            javax.security.auth.x500,
+                            javax.xml.datatype,
+                            javax.xml.namespace,
+                            javax.xml.parsers,
+                            org.ietf.jgss,
+                            org.osgi.framework,
+                            org.osgi.service.cm,
+                            org.slf4j,
+                            org.slf4j.spi,
+                            org.w3c.dom,
+                            org.w3c.dom.bootstrap,
+                            org.w3c.dom.ls,
+                            org.xml.sax,
+                            net.sf.ehcache.*;resolution:=optional,
+                            net.spy.memcached.*;resolution:=optional,
                         </Import-Package>
                         <Embed-Dependency>!slf4j-api,*;scope=compile|runtime</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
