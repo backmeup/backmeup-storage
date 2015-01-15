@@ -86,7 +86,7 @@ public class SecurityInterceptor implements ContainerRequestFilter {
         
         LOGGER.info("Resolved user with id: " + userId);
         
-        return new StorageUser(Long.parseLong(accessToken));
+        return new StorageUser(Long.parseLong(userId));
     }
 
     private boolean isUserAllowed(final StorageUser user, final Set<String> rolesSet) {
