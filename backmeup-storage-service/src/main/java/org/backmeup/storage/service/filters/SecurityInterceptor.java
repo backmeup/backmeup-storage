@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 import javax.annotation.security.DenyAll;
 import javax.annotation.security.PermitAll;
@@ -77,10 +78,15 @@ public class SecurityInterceptor implements ContainerRequestFilter {
     }
 
     private StorageUser resolveUser(final String accessToken) {
-        LOGGER.info("Resolved user with id: " + accessToken);
+        // Currently, access tokes look like this: 
+        // userId;password, eg. '1;abc123'
+        // We have to split this token to get the userId
+        final StringTokenizer tokenizer = new StringTokenizer(accessToken, ";");
+        final String userId = tokenizer.nextToken(); 
         
-        Long userId = Long.parseLong(accessToken);
-        return new StorageUser(userId);
+        LOGGER.info("Resolved user with id: " + userId);
+        
+        return new StorageUser(Long.parseLong(accessToken));
     }
 
     private boolean isUserAllowed(final StorageUser user, final Set<String> rolesSet) {
