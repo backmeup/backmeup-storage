@@ -68,7 +68,7 @@ public class BackmeupStorageClient implements StorageClient {
         try {
             uriBuilder = new URIBuilder(serviceUrl);
 
-            uriBuilder.setPath(AUTH_RESOURCE);
+            uriBuilder.setPath((uriBuilder.getPath() + AUTH_RESOURCE).replaceAll("//+", "/"));
             uriBuilder.addParameter("username", username);
             uriBuilder.addParameter("password", password);
 
