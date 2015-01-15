@@ -45,7 +45,7 @@ public final class StorageConnectionStringBuilder {
     }
 
     public void setProtocol(String protocol) {
-        if (!"http".equals(protocol) || !"https".equals(protocol)) {
+        if (!"http".equals(protocol) && !"https".equals(protocol)) {
             throw new IllegalArgumentException(
                     String.format("Protocol '%s' not supported. Use http or https!",protocol));
         }
@@ -88,7 +88,7 @@ public final class StorageConnectionStringBuilder {
     }
     
     public String getProperty(String key) {
-        if (key == null || key.equals("")) {
+        if ("".equals(key)) {
             throw new IllegalArgumentException("Key must not be null");
         }
         
@@ -149,12 +149,12 @@ public final class StorageConnectionStringBuilder {
             }
 
             final String key = valuePairs[i].substring(0, equalDex);
-            if (key == null || key.equals("")) {
+            if ("".equals(key)) {
                 throw new IllegalArgumentException(INVALID_CONNECTION_STRING);
             }
 
             final String value = valuePairs[i].substring(equalDex + 1);
-            if (value == null || value.equals("")) {
+            if ("".equals(value)) {
                 throw new IllegalArgumentException(INVALID_CONNECTION_STRING);
             }
 
