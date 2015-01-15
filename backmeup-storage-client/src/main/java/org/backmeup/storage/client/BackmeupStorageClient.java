@@ -105,7 +105,7 @@ public class BackmeupStorageClient implements StorageClient {
         } finally {
             response.close();
         }
-    };
+    }
 
     @Override
     public Metadata saveFile(String accessToken, String targetPath, boolean overwrite, long numBytes, InputStream data) throws IOException {

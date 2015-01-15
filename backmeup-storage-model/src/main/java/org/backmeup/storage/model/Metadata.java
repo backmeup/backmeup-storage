@@ -16,7 +16,7 @@ public class Metadata {
         this.bytes = bytes;
         this.size = humanReadableByteCount(bytes, true);
         this.hash = hash;
-        this.modified = modified;
+        this.modified = new Date(modified.getTime());
         this.path = path;
         this.isDir = false;
     }

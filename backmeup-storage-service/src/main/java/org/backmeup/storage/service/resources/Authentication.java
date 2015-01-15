@@ -15,6 +15,8 @@ import javax.ws.rs.core.Response.Status;
 
 import org.backmeup.service.client.BackmeupService;
 import org.backmeup.storage.service.auth.AuthInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Authenticate users and manage access tokens.
@@ -22,6 +24,7 @@ import org.backmeup.storage.service.auth.AuthInfo;
 @Path("/authenticate")
 @RequestScoped
 public class Authentication {
+    protected final Logger LOGGER = LoggerFactory.getLogger(getClass());
     
     @Inject
     private BackmeupService backmeupService;
@@ -43,6 +46,7 @@ public class Authentication {
             Date issueDate = authInfo.getIssueDate();
             return new AuthInfo(accessToken, issueDate);
         } catch (Exception ex) {
+            LOGGER.error("", ex);
             throw new WebApplicationException(Status.UNAUTHORIZED);
         }
     }

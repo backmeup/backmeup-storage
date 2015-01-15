@@ -2,6 +2,7 @@ package org.backmeup.storage.client;
 
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 
 
@@ -12,16 +13,19 @@ import java.util.Map.Entry;
  * 
  * backmeup-storage;http://localhost:8080/backmeup-storage-service/;Token=abc123
  * 
+ * https://github.com/couchbase/couchbase-java-client/blob/master/src/main/java/com/couchbase/client/java/ConnectionString.java
+ * 
  */
-public class StorageConnectionStringBuilder {
+public final class StorageConnectionStringBuilder {
+    private static final String INVALID_CONNECTION_STRING = "Invalid Connection String";
     private static final String PREFIX = "backmeup-storage";
     private static final String PROTOCOL = "protocol";
     private static final String HOST = "host";
     private static final String PORT = "port";
     private static final String PATH = "path";
        
-    private HashMap<String, String> url;
-    private HashMap<String, String> properties;
+    private Map<String, String> url;
+    private Map<String, String> properties;
     
     // Constructors -----------------------------------------------------------
     public StorageConnectionStringBuilder() {
@@ -41,9 +45,9 @@ public class StorageConnectionStringBuilder {
     }
 
     public void setProtocol(String protocol) {
-        if (!protocol.equals("http") || !protocol.equals("http")) {
+        if (!"http".equals(protocol) || !"https".equals(protocol)) {
             throw new IllegalArgumentException(
-                    String.format("Protocol '%1' not supported. Use http or https!",protocol));
+                    String.format("Protocol '%s' not supported. Use http or https!",protocol));
         }
         url.put(PROTOCOL, protocol);
     }
@@ -84,7 +88,7 @@ public class StorageConnectionStringBuilder {
     }
     
     public String getProperty(String key) {
-        if (key == null || key == "") {
+        if (key == null || key.equals("")) {
             throw new IllegalArgumentException("Key must not be null");
         }
         
@@ -92,7 +96,7 @@ public class StorageConnectionStringBuilder {
     }
     
     public String getUrl() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         if (url.containsKey(PROTOCOL)) {
             sb.append(url.get(PROTOCOL));
             sb.append("://");
@@ -110,7 +114,7 @@ public class StorageConnectionStringBuilder {
     
     public void parse(String connectionString) {
         if (connectionString == null || connectionString.length() == 0) {
-            throw new IllegalArgumentException("Invalid Connection String");
+            throw new IllegalArgumentException(INVALID_CONNECTION_STRING);
         }
 
         // 1: get name value pairs by splitting on the ';' character
@@ -118,7 +122,7 @@ public class StorageConnectionStringBuilder {
 
         // 2: parse prefix
         if (!valuePairs[0].equals(PREFIX)) {
-            throw new IllegalArgumentException("Invalid Connection String");
+            throw new IllegalArgumentException(INVALID_CONNECTION_STRING);
         }
 
         // 3: parse server url
@@ -134,24 +138,24 @@ public class StorageConnectionStringBuilder {
             setPath(serverUrl.getPath());
 
         } catch (Exception e) {
-            throw new IllegalArgumentException("Invalid Connection String"); 
+            throw new IllegalArgumentException(INVALID_CONNECTION_STRING, e); 
         }
 
         // 4: for each remaining pair parse into appropriate map entries
         for (int i = 2; i < valuePairs.length; i++) {
-            final int equalDex = valuePairs[i].indexOf("=");
+            final int equalDex = valuePairs[i].indexOf('=');
             if (equalDex < 1) {
-                throw new IllegalArgumentException("Invalid Connection String");
+                throw new IllegalArgumentException(INVALID_CONNECTION_STRING);
             }
 
             final String key = valuePairs[i].substring(0, equalDex);
             if (key == null || key.equals("")) {
-                throw new IllegalArgumentException("Invalid Connection String");
+                throw new IllegalArgumentException(INVALID_CONNECTION_STRING);
             }
 
             final String value = valuePairs[i].substring(equalDex + 1);
             if (value == null || value.equals("")) {
-                throw new IllegalArgumentException("Invalid Connection String");
+                throw new IllegalArgumentException(INVALID_CONNECTION_STRING);
             }
 
             addProperty(key, value);
