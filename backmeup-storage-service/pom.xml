@@ -74,7 +74,7 @@
             <version>${version.org.jboss.weld.servlet}</version>
         </dependency>
     </dependencies>
-    
+
     <profiles>
         <profile>
             <id>integration-tests</id>
@@ -110,6 +110,41 @@
                 </plugins>
             </build>
         </profile>
+        
+        <!-- This profile allows environemnt specific folders for resources.  
+             For local builds, omit the 'env' parameter
+             For env specific builds, e.g. add '-Denv=test' to maven  -->
+        <profile>
+            <id>environment-specific</id>
+            <activation>
+                <property>
+                    <name>env</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-war-plugin</artifactId>
+                        <version>${version.org.apache.maven.plugins.maven-war-plugin}</version>
+                        <configuration>
+                            <webResources>
+                                <!-- Note: order of the following resource 
+                                    elements are important. If there are duplicate files, the first file copied 
+                                    will win -->
+                                <resource>
+                                    <directory>src/main/resources-${env}</directory>
+                                    <targetPath>WEB-INF/classes</targetPath>
+                                </resource>
+                                <resource>
+                                    <directory>src/main/resources</directory>
+                                    <targetPath>WEB-INF/classes</targetPath>
+                                </resource>
+                            </webResources>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
-    
 </project>
