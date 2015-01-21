@@ -138,16 +138,22 @@ public class BackmeupStorageClient implements StorageClient {
         
         try {
             HttpEntity respEntity = response.getEntity();
-            String json = EntityUtils.toString(respEntity, "UTF-8");
-            LOGGER.info(json);
+//            String json = EntityUtils.toString(respEntity, "UTF-8");
+//            LOGGER.info(json);
+            
+            ObjectMapper mapper = createJsonMapper();
+            Metadata metadata = mapper.readValue(respEntity.getContent(), Metadata.class);
+            
+            // release all resources held by httpentity
             EntityUtils.consume(respEntity);
+            
+            return metadata;
         } catch (Exception e) {
             LOGGER.error("", e);
+            return null;
         } finally {
             response.close();
         }
-
-        return null;
     }
 
     @Override
