@@ -4,41 +4,62 @@ import java.util.Date;
 
 public class Metadata {
 
-    private final String size;
-    private final long bytes;
-    private final String hash;
-    private final Date modified;
-    private final String path;
-    private final boolean isDir;
+    private String size;
+    private long bytes;
+    private String hash;
+    private Date modified;
+    private String path;
+    private boolean isDir;
+    
+    public Metadata() {
+        this.isDir = false;
+    }
 
     public Metadata(long bytes, String hash, Date modified, String path) {
         super();
         this.bytes = bytes;
         this.size = humanReadableByteCount(bytes, true);
         this.hash = hash;
-        this.modified = new Date(modified.getTime());
+        this.modified = (Date) modified.clone();
         this.path = path;
         this.isDir = false;
-    }
-
-    public String getSize() {
-        return size;
     }
 
     public long getBytes() {
         return bytes;
     }
+    
+    public void setBytes(long bytes) {
+        this.bytes = bytes;
+        this.size = humanReadableByteCount(bytes, true);
+    }
+    
+    public String getSize() {
+        return size;
+    }
 
     public String getHash() {
         return hash;
     }
+    
+    public void setHash(String hash) {
+        this.hash = hash;
+    }
 
     public Date getModified() {
-        return modified;
+        return (Date) modified.clone();
+    }
+    
+    public void setModified(Date modified) {
+        this.modified = (Date) modified.clone();
     }
 
     public String getPath() {
         return path;
+    }
+    
+    public void setPath(String path) {
+        this.path = path;
     }
 
     public boolean isDir() {
