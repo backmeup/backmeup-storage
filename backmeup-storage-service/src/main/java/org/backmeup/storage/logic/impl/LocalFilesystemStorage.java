@@ -19,6 +19,7 @@ import javax.ws.rs.core.Response.Status;
 
 import org.backmeup.storage.logic.StorageLogic;
 import org.backmeup.storage.model.Metadata;
+import org.backmeup.storage.model.StorageUser;
 import org.backmeup.storage.model.utils.StringUtils;
 import org.backmeup.storage.service.config.Configuration;
 import org.slf4j.Logger;
@@ -37,16 +38,18 @@ public class LocalFilesystemStorage implements StorageLogic {
     }
 
     @Override
-    public File getFile(String path) {
-        final String completePath = BASE_PATH + path;
+    public File getFile(StorageUser user, String path) {
+        final String userPath = getUserFilePath(path, user);
+        final String completePath = BASE_PATH + userPath;
         final Path filePath = Paths.get(completePath);
         
         return new File(filePath.toAbsolutePath().toString());
     }
 
     @Override
-    public Metadata saveFile(String filePath, boolean overwrite, long contentLength, InputStream content) {
-        final String completePath = BASE_PATH + filePath;
+    public Metadata saveFile(StorageUser user, String filePath, boolean overwrite, long contentLength, InputStream content) {
+        final String userFilePath = getUserFilePath(filePath, user);
+        final String completePath = BASE_PATH + userFilePath;
         final Path path = Paths.get(completePath);
 
         File file = new File(path.toAbsolutePath().toString());
@@ -92,5 +95,9 @@ public class LocalFilesystemStorage implements StorageLogic {
             hash = "-1";
         }
         return new Metadata(totalLength, hash, new Date(), filePath);
+    }
+    
+    protected String getUserFilePath(String filePath, StorageUser user) {
+        return "/" + user.getUserId() + "/" + filePath;
     }
 }

@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.backmeup.storage.logic.StorageLogic;
 import org.backmeup.storage.model.Metadata;
+import org.backmeup.storage.model.StorageUser;
 
 public class DummyStorage implements StorageLogic {
     private final Map<String, File> files;
@@ -27,13 +28,13 @@ public class DummyStorage implements StorageLogic {
     }
 
     @Override
-    public File getFile(String path) {
+    public File getFile(StorageUser user, String path) {
         return files.get(path);
     }
 
     @Override
-    public Metadata saveFile(String filePath, boolean overwrite, long contentLength, InputStream content) {
-        File file = getFile("should return the only file for any key");
+    public Metadata saveFile(StorageUser user, String filePath, boolean overwrite, long contentLength, InputStream content) {
+        File file = getFile(user, "should return the only file for any key");
         return new Metadata(file.length(), "900150983cd24fb0d6963f7d28e17f72", new Date(), file.getPath());
     }
 

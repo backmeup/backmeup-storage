@@ -50,9 +50,8 @@ public class Files {
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response getFile(@PathParam("path") String filePath, @Context SecurityContext securityContext) {
         StorageUser user = getUserFromContext(securityContext);
-        String userFilePath = getUserFilePath(filePath, user);
-        
-        File file = getStorageLogic().getFile(userFilePath);
+
+        File file = getStorageLogic().getFile(user, filePath);
         if (file == null || !file.exists()) {
             throw new WebApplicationException(Status.NOT_FOUND);
         }
@@ -78,9 +77,8 @@ public class Files {
         }
         
         StorageUser user = getUserFromContext(securityContext);
-        String userFilePath = getUserFilePath(filePath, user);
 
-        Metadata fileMetadata = getStorageLogic().saveFile(userFilePath, overwrite, contentLength, request.getInputStream());
+        Metadata fileMetadata = getStorageLogic().saveFile(user, filePath, overwrite, contentLength, request.getInputStream());
         return Response.ok(fileMetadata).build();
     }
     
@@ -92,7 +90,4 @@ public class Files {
         return activeUser;
     }
     
-    protected String getUserFilePath(String filePath, StorageUser user) {
-        return "/" + user.getUserId() + "/" + filePath;
-    }
 }

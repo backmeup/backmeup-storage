@@ -92,10 +92,5 @@ public class FilesTest {
             StorageUser dummy = new StorageUser(1L);
             return dummy;
         }
-        
-        @Override
-        protected String getUserFilePath(String filePath, StorageUser user) {
-            return filePath;
-        }
     }
 }
