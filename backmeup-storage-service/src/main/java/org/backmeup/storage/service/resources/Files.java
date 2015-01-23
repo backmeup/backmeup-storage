@@ -33,13 +33,9 @@ import org.backmeup.storage.service.auth.UserPrincipal;
 @RequestScoped
 public class Files {
     
-    public Files() {
-        
-    }
-    
     @Inject
     private StorageLogic storageLogic;
-
+    
     public StorageLogic getStorageLogic() {
         return storageLogic;
     }

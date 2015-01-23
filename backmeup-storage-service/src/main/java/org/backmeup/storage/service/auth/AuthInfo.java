@@ -13,7 +13,7 @@ public class AuthInfo {
     public AuthInfo(String accessToken, Date issueDate) {
         super();
         this.accessToken = accessToken;
-        this.issueDate = new Date(issueDate.getTime());
+        this.issueDate = (Date) issueDate.clone();
     }
 
     public String getAccessToken() {
@@ -25,11 +25,11 @@ public class AuthInfo {
     }
 
     public Date getIssueDate() {
-        return issueDate;
+        return (Date) issueDate.clone();
     }
 
     public void setIssueDate(Date issueDate) {
-        this.issueDate = new Date(issueDate.getTime());
+        this.issueDate = (Date) issueDate.clone();
     }
 }
 

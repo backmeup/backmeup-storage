@@ -67,7 +67,10 @@ public class LocalFilesystemStorage implements StorageLogic {
         long totalLength = 0;
 
         File parent = new File(path.getParent().toAbsolutePath().toString());
-        parent.mkdirs();
+        if(!parent.mkdirs()) {
+            LOGGER.info("Unable to create parent directory " + parent);
+            // maybe throw a filenotfoundexception
+        };
 
         if (!file.canWrite()) {
             file.setWritable(true);

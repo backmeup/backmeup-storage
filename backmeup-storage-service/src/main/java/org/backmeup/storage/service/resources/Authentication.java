@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 @Path("/authenticate")
 @RequestScoped
 public class Authentication {
-    protected final Logger LOGGER = LoggerFactory.getLogger(getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(Authentication.class);
     
     @Inject
     private BackmeupService backmeupService;
