@@ -110,26 +110,17 @@ public class BackmeupStorageClient implements StorageClient {
     @Override
     public Metadata saveFile(String accessToken, String targetPath, boolean overwrite, long numBytes, InputStream data) throws IOException {
         LOGGER.info("URL: " + serviceUrl + "");
- 
-        StringBuilder sb = new StringBuilder();
-        sb.append(serviceUrl);
-        sb.append(FILE_RESOURCE);
-        sb.append(targetPath);
-        if(overwrite){
-            sb.append("?overwrite=");
-            sb.append(overwrite);
-        }
-        String url = sb.toString();
-        url = url.replaceAll(REGEX_MATCH_DOUBLE_SLASH, "/");
         
-        URI uri;
+        URI full = null;
         try {
-            uri = new URI(url);
+            URI base = new URI(serviceUrl+FILE_RESOURCE);
+            full = new URI(base.getScheme(), base.getAuthority(), base.getPath().replaceAll("//", "/")+targetPath, overwrite?"overwrite=true":null, null);
         } catch (URISyntaxException e) {
             LOGGER.error("cannot parse uri", e);
             throw new IOException(e);
         }
-        HttpPut request = new HttpPut(uri);
+        
+        HttpPut request = new HttpPut(full);
         request.setHeader("Accept", "application/json");
         request.setHeader("Authorization", accessToken);
         InputStreamEntity reqEntity = new InputStreamEntity(data, numBytes, ContentType.APPLICATION_OCTET_STREAM);
