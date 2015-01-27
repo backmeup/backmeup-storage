@@ -30,9 +30,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class BackmeupStorageClient implements StorageClient {
     private static final Logger LOGGER = LoggerFactory.getLogger(BackmeupStorageClient.class);
-    
-    private static final String REGEX_MATCH_DOUBLE_SLASH = "(?<!(http:|https:))//";
-    
+        
     private static final String FILE_RESOURCE = "/files";
     private static final String AUTH_RESOURCE = "/authenticate";
     
@@ -155,10 +153,17 @@ public class BackmeupStorageClient implements StorageClient {
     }
 
     @Override
-    public void getFile(String accessToken, String path, OutputStream data) throws IOException {
-        String url = serviceUrl + FILE_RESOURCE + path;
-        url = url.replaceAll(REGEX_MATCH_DOUBLE_SLASH, "/");
-        HttpGet httpGet = new HttpGet(url);
+    public void getFile(String accessToken, String path, OutputStream data) throws IOException {       
+        URI full = null;
+        try {
+            URI base = new URI(serviceUrl+FILE_RESOURCE);
+            full = new URI(base.getScheme(), base.getAuthority(), base.getPath().replaceAll("//", "/")+path, null, null);
+        } catch (URISyntaxException e) {
+            LOGGER.error("cannot parse uri", e);
+            throw new IOException(e);
+        }
+        
+        HttpGet httpGet = new HttpGet(full);
         httpGet.addHeader("Authorization", accessToken);
         CloseableHttpResponse response = client.execute(httpGet);
 
