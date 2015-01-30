@@ -1,6 +1,8 @@
 package org.backmeup.storage.service.resources;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.StringTokenizer;
 
 import javax.annotation.security.PermitAll;
@@ -48,13 +50,25 @@ public class Download {
         if (file == null || !file.exists()) {
             throw new WebApplicationException(Status.NOT_FOUND);
         }
-        return Response
-                .ok(file)
-                .header("Content-Disposition",
-                        "attachment; filename=" + file.getName()).build();
+
+        try {
+            String mediaType = Files.probeContentType(file.toPath());
+
+            if(mediaType == null){
+                mediaType = MediaType.APPLICATION_OCTET_STREAM;
+            }
+
+            return Response
+                    .ok(file)
+                    .type(mediaType)
+                    .header("Content-Disposition",
+                            "attachment; filename=" + file.getName()).build();
+        } catch (IOException e) {
+            throw new WebApplicationException(Status.NOT_FOUND);
+        }
     }
     
-    private StorageUser getUserFromAccessToken(String accessToken) {
+    protected StorageUser getUserFromAccessToken(String accessToken) {
         if ("".equals(accessToken)) {
             throw new WebApplicationException(ACCESS_DENIED);
         }
