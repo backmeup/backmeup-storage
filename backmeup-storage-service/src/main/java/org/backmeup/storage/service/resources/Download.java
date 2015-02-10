@@ -37,7 +37,7 @@ public class Download {
     
     @PermitAll
     @GET
-    @Path("/{accessToken:[;&&[^/]]+}/{filePath:.+}")
+    @Path("/{accessToken:[^/]+}/{filePath:.+}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response getFile(@PathParam("accessToken") String accessToken, @PathParam("filePath") String filePath) {
         StorageUser user = getUserFromAccessToken(accessToken);
@@ -69,12 +69,8 @@ public class Download {
         if ("".equals(accessToken)) {
             throw new WebApplicationException(ACCESS_DENIED);
         }
-        if (!accessToken.startsWith("accessToken=")) {
-            throw new WebApplicationException(ACCESS_DENIED);
-        }
-        
-        String accessTokenValue = accessToken.substring(12);
-        final StringTokenizer tokenizer = new StringTokenizer(accessTokenValue, ";");
+
+        final StringTokenizer tokenizer = new StringTokenizer(accessToken, ";");
         final String userId = tokenizer.nextToken();
         return new StorageUser(Long.parseLong(userId));
     }
