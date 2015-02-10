@@ -37,13 +37,9 @@ public class Download {
     
     @PermitAll
     @GET
-    @Path("/{pathWithToken:[^/]+.*}")
+    @Path("/{accessToken:[^/]+}/{filePath:[^/]+.*}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    public Response getFile(@PathParam("pathWithToken") String pathWithToken) {
-        final StringTokenizer tokenizer = new StringTokenizer(pathWithToken, "&");
-        final String filePath = tokenizer.nextToken();
-        final String accessToken = tokenizer.nextToken();
-        
+    public Response getFile(@PathParam("accessToken") String accessToken, @PathParam("filePath") String filePath) {
         StorageUser user = getUserFromAccessToken(accessToken);
 
         File file = getStorageLogic().getFile(user, filePath);
