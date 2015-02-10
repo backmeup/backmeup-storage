@@ -37,7 +37,7 @@ public class Download {
     
     @PermitAll
     @GET
-    @Path("/{accessToken:[^/]+}/{filePath:[^/]+.*}")
+    @Path("/{accessToken:[;&&[^/]]+}/{filePath:.+}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response getFile(@PathParam("accessToken") String accessToken, @PathParam("filePath") String filePath) {
         StorageUser user = getUserFromAccessToken(accessToken);
