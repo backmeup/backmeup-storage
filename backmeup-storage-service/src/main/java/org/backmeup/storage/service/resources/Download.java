@@ -61,8 +61,9 @@ public class Download {
             return Response
                     .ok(file)
                     .type(mediaType)
-                    .header("Content-Disposition",
-                            "attachment; filename=" + file.getName()).build();
+                    .build();
+                    //.header("Content-Disposition",
+                    //        "attachment; filename=" + file.getName()).build();
         } catch (IOException e) {
             throw new WebApplicationException(Status.NOT_FOUND);
         }
