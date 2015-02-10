@@ -66,9 +66,11 @@ public class Download {
     }
     
     protected StorageUser getUserFromAccessToken(String accessToken) {
-        if ("".equals(accessToken)) {
+        if ("".equals(accessToken) || ! accessToken.contains(";")) {
             throw new WebApplicationException(ACCESS_DENIED);
         }
+        
+        //TODO: Better check if accessToken is valid before tokenize and parseLong
 
         final StringTokenizer tokenizer = new StringTokenizer(accessToken, ";");
         final String userId = tokenizer.nextToken();
