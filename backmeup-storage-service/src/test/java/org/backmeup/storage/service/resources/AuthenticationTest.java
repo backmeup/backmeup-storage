@@ -6,6 +6,9 @@ import static org.hamcrest.Matchers.equalTo;
 import java.util.Date;
 
 import org.backmeup.model.dto.BackupJobDTO;
+import org.backmeup.model.dto.BackupJobExecutionDTO;
+import org.backmeup.model.dto.WorkerConfigDTO;
+import org.backmeup.model.dto.WorkerInfoDTO;
 import org.backmeup.service.client.BackmeupService;
 import org.backmeup.service.client.model.auth.AuthInfo;
 import org.backmeup.storage.service.EmbeddedTestServer;
@@ -80,6 +83,22 @@ public class AuthenticationTest {
 
         @Override
         public BackupJobDTO updateBackupJob(BackupJobDTO backupJob) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public BackupJobExecutionDTO getBackupJobExecution(Long jobExecId) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public BackupJobExecutionDTO updateBackupJobExecution(
+                BackupJobExecutionDTO jobExecution) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public WorkerConfigDTO initializeWorker(WorkerInfoDTO workerInfo) {
             throw new UnsupportedOperationException();
         }
 
