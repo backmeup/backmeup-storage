@@ -43,8 +43,8 @@ public class Authentication {
             BackmeupService serviceClient = getBackmeupService();
             org.backmeup.service.client.model.auth.AuthInfo authInfo = serviceClient.authenticate(username, password);
             String accessToken = authInfo.getAccessToken();
-            Date issueDate = authInfo.getIssueDate();
-            return new AuthInfo(accessToken, issueDate);
+            Date expiresAt = authInfo.getExpiresAt();
+            return new AuthInfo(accessToken, expiresAt);
         } catch (Exception ex) {
             LOGGER.error("", ex);
             throw new WebApplicationException(Status.UNAUTHORIZED);

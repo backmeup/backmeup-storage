@@ -26,7 +26,7 @@ public class AuthenticationTest {
     private static final int PORT = 7654;
     
     private static final String AUTH_ACCESS_TOKEN = "4711-ABCD-#+#+";
-    private static final Date AUTH_ISSUE_DATE = new Date();
+    private static final Date AUTH_EXPIRES_DATE = new Date();
 
     @Rule
     public final EmbeddedTestServer SERVER = new EmbeddedTestServer(PORT, AuthenticationWithMockedLogic.class);
@@ -57,7 +57,7 @@ public class AuthenticationTest {
             .log().all()
             .statusCode(200)
             .body("accessToken", equalTo(AUTH_ACCESS_TOKEN))
-            .body("issueDate", equalTo(AUTH_ISSUE_DATE.getTime()));
+            .body("expiresAt", equalTo(AUTH_EXPIRES_DATE.getTime()));
     }
 
     // Mocks ------------------------------------------------------------------
@@ -73,7 +73,7 @@ public class AuthenticationTest {
 
         @Override
         public AuthInfo authenticate(String username, String password) {
-            return new AuthInfo(AUTH_ACCESS_TOKEN, AUTH_ISSUE_DATE);
+            return new AuthInfo(AUTH_ACCESS_TOKEN, AUTH_EXPIRES_DATE);
         }
 
         @Override
