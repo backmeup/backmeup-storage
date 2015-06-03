@@ -5,16 +5,21 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.StringTokenizer;
 
 import javax.annotation.security.DenyAll;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
+import javax.inject.Inject;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.Provider;
 
+import org.backmeup.keyserver.client.KeyserverClient;
+import org.backmeup.keyserver.model.KeyserverException;
+import org.backmeup.keyserver.model.Token.Kind;
+import org.backmeup.keyserver.model.dto.AuthResponseDTO;
+import org.backmeup.keyserver.model.dto.TokenDTO;
 import org.backmeup.storage.model.StorageUser;
 import org.backmeup.storage.service.auth.StorageSecurityContext;
 import org.jboss.resteasy.core.Headers;
@@ -30,6 +35,9 @@ public class SecurityInterceptor implements ContainerRequestFilter {
     private static final String AUTHORIZATION_PROPERTY = "Authorization";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SecurityInterceptor.class);
+    
+    @Inject
+    private KeyserverClient keyserverClient;
 
     @Override
     public void filter(ContainerRequestContext requestContext) {
@@ -78,15 +86,18 @@ public class SecurityInterceptor implements ContainerRequestFilter {
     }
 
     private StorageUser resolveUser(final String accessToken) {
-        // Currently, access tokes look like this: 
-        // userId;password, eg. '1;abc123'
-        // We have to split this token to get the userId
-        final StringTokenizer tokenizer = new StringTokenizer(accessToken, ";");
-        final String userId = tokenizer.nextToken(); 
-        
-        LOGGER.info("Resolved user with id: " + userId);
-        
-        return new StorageUser(Long.parseLong(userId));
+        try {
+            TokenDTO token = new TokenDTO(Kind.INTERNAL, accessToken);
+            AuthResponseDTO response = keyserverClient.authenticateWithInternalToken(token);
+            String userId = response.getUsername();
+
+            LOGGER.info("Resolved user with id: " + userId);
+
+            return new StorageUser(Long.parseLong(userId));
+        } catch (KeyserverException ke) {
+            LOGGER.info("", ke);
+        }
+        return null;
     }
 
     private boolean isUserAllowed(final StorageUser user, final Set<String> rolesSet) {

@@ -3,7 +3,6 @@ package org.backmeup.storage.service.resources;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.StringTokenizer;
 
 import javax.annotation.security.PermitAll;
 import javax.enterprise.context.RequestScoped;
@@ -17,6 +16,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.backmeup.keyserver.client.KeyserverClient;
+import org.backmeup.keyserver.model.KeyserverException;
+import org.backmeup.keyserver.model.Token.Kind;
+import org.backmeup.keyserver.model.dto.AuthResponseDTO;
+import org.backmeup.keyserver.model.dto.TokenDTO;
 import org.backmeup.storage.logic.StorageLogic;
 import org.backmeup.storage.model.StorageUser;
 import org.jboss.resteasy.core.Headers;
@@ -29,6 +33,9 @@ public class Download {
     
     @Inject
     private StorageLogic storageLogic;
+    
+    @Inject
+    private KeyserverClient keyserverClient;
     
     public StorageLogic getStorageLogic() {
         return storageLogic;
@@ -66,14 +73,18 @@ public class Download {
     }
     
     protected StorageUser getUserFromAccessToken(String accessToken) {
-        if ("".equals(accessToken) || ! accessToken.contains(";")) {
+        if ("".equals(accessToken)) {
             throw new WebApplicationException(ACCESS_DENIED);
         }
         
-        //TODO: Better check if accessToken is valid before tokenize and parseLong
+        try {
+            TokenDTO token = new TokenDTO(Kind.INTERNAL, accessToken);
+            AuthResponseDTO response = keyserverClient.authenticateWithInternalToken(token);
+            String userId = response.getUsername();
 
-        final StringTokenizer tokenizer = new StringTokenizer(accessToken, ";");
-        final String userId = tokenizer.nextToken();
-        return new StorageUser(Long.parseLong(userId));
+            return new StorageUser(Long.parseLong(userId));
+        } catch (KeyserverException ke) {
+            throw new WebApplicationException(ACCESS_DENIED);
+        }
     }
 }
