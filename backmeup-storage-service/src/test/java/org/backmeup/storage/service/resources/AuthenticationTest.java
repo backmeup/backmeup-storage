@@ -24,7 +24,7 @@ import com.jayway.restassured.parsing.Parser;
 public class AuthenticationTest {
     private static final String HOST = "http://localhost";
     private static final int PORT = 7654;
-    
+
     private static final String AUTH_ACCESS_TOKEN = "4711-ABCD-#+#+";
     private static final Date AUTH_EXPIRES_DATE = new Date();
 
@@ -32,7 +32,7 @@ public class AuthenticationTest {
     public final EmbeddedTestServer SERVER = new EmbeddedTestServer(PORT, AuthenticationWithMockedLogic.class);
 
     @BeforeClass
-    public static void setUpBeforeClass() {			
+    public static void setUpBeforeClass() {
         RestAssured.baseURI = HOST;
         RestAssured.port = PORT;
         RestAssured.defaultParser = Parser.JSON;
@@ -48,7 +48,7 @@ public class AuthenticationTest {
     public void testAuthenticate() {
         final String username = "user1";
         final String password = "password123!";
-//        ValidatableResponse response = 
+//        ValidatableResponse response =
         given()
             .log().all()
         .when()
@@ -92,6 +92,12 @@ public class AuthenticationTest {
         }
 
         @Override
+        public BackupJobExecutionDTO getBackupJobExecution(Long jobExecId,
+                boolean redeemToken) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
         public BackupJobExecutionDTO updateBackupJobExecution(
                 BackupJobExecutionDTO jobExecution) {
             throw new UnsupportedOperationException();
@@ -101,6 +107,5 @@ public class AuthenticationTest {
         public WorkerConfigDTO initializeWorker(WorkerInfoDTO workerInfo) {
             throw new UnsupportedOperationException();
         }
-
     }
 }
