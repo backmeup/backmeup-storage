@@ -4,11 +4,13 @@ import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 
 import java.util.Date;
+import java.util.List;
 
 import org.backmeup.model.dto.BackupJobDTO;
 import org.backmeup.model.dto.BackupJobExecutionDTO;
 import org.backmeup.model.dto.WorkerConfigDTO;
 import org.backmeup.model.dto.WorkerInfoDTO;
+import org.backmeup.model.dto.WorkerMetricDTO;
 import org.backmeup.service.client.BackmeupService;
 import org.backmeup.service.client.model.auth.AuthInfo;
 import org.backmeup.storage.service.EmbeddedTestServer;
@@ -105,6 +107,11 @@ public class AuthenticationTest {
 
         @Override
         public WorkerConfigDTO initializeWorker(WorkerInfoDTO workerInfo) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void addWorkerMetrics(List<WorkerMetricDTO> workerMetrics) {
             throw new UnsupportedOperationException();
         }
     }
