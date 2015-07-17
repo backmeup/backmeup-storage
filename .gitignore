@@ -25,6 +25,7 @@ target/
 .settings/
 .metadata
 RemoteSystemsTempFiles
+.recommenders
 
 # Mac OS X
 .DS_Store
