@@ -79,6 +79,11 @@ public class AuthenticationTest {
         }
 
         @Override
+        public AuthInfo authenticateWorker(String workerId, String workerSecret) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
         public BackupJobDTO getBackupJob(Long jobId) {
             throw new UnsupportedOperationException();
         }
