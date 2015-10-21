@@ -89,7 +89,7 @@ public class FilesTest {
         
         @Override
         protected StorageUser getUserFromContext(SecurityContext context) {
-            StorageUser dummy = new StorageUser(1L);
+            StorageUser dummy = new StorageUser(1L, "TOK1");
             return dummy;
         }
     }

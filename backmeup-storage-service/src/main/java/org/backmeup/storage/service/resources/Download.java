@@ -82,7 +82,7 @@ public class Download {
             AuthResponseDTO response = keyserverClient.authenticateWithInternalToken(token);
             String userId = response.getUsername();
 
-            return new StorageUser(Long.parseLong(userId));
+            return new StorageUser(Long.parseLong(userId), accessToken);
         } catch (KeyserverException ke) {
             throw new WebApplicationException(ACCESS_DENIED);
         }

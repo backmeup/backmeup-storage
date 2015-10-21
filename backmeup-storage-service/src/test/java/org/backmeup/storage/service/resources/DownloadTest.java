@@ -95,7 +95,7 @@ public class DownloadTest {
         
         @Override
         protected StorageUser getUserFromAccessToken(String accessToken) {
-            StorageUser dummy = new StorageUser(1L);
+            StorageUser dummy = new StorageUser(1L, accessToken);
             return dummy;
         }
     }

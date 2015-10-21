@@ -93,7 +93,7 @@ public class SecurityInterceptor implements ContainerRequestFilter {
 
             LOGGER.info("Resolved user with id: " + userId);
 
-            return new StorageUser(Long.parseLong(userId));
+            return new StorageUser(Long.parseLong(userId), accessToken);
         } catch (KeyserverException ke) {
             LOGGER.info("", ke);
         }
