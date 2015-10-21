@@ -52,26 +52,24 @@ public class FilesTest {
 
     @Test
     public void testGetFileSimplePath() {
-        //		ValidatableResponse response = 
         given()
-        .log().all()
+            .log().all()
         .when()
-        .get("/files/file.txt")
+            .get("/files/file.txt")
         .then()
-        .log().all()
-        .statusCode(200);
+            .log().all()
+            .statusCode(200);
     }
 
     @Test
     public void testGetFileLongPath() {
-        //		ValidatableResponse response = 
         given()
-        .log().all()
+            .log().all()
         .when()
-        .get("/files/path/to/file.txt")
+            .get("/files/path/to/file.txt")
         .then()
-        .log().all()
-        .statusCode(200);
+            .log().all()
+            .statusCode(200);
     }
 
     // Mocks ------------------------------------------------------------------

@@ -43,39 +43,73 @@ public class DownloadTest {
     public static void tearDownAfterClass() {
         RestAssured.reset();
     }
-
+    
     @Test
     public void testDownloadHtmlFile() {
         given()
-        .log().all()
+            .log().all()
         .when()
-        .get("/download/1/2/file.html")
+            .get("/download/1/file.html")
         .then()
-        .log().all()
-        .contentType(MediaType.TEXT_HTML)
-        .statusCode(200);
+            .log().all()
+            .contentType(MediaType.TEXT_HTML)
+            .statusCode(200);
+    }
+
+    @Test
+    public void testDownloadHtmlFileWithOwnerId() {
+        given()
+            .log().all()
+        .when()
+            .get("/download/1/2/file.html")
+        .then()
+            .log().all()
+            .contentType(MediaType.TEXT_HTML)
+            .statusCode(200);
     }
     
     @Test
     public void testDownloadJpgFile() {
         given()
-        .log().all()
+            .log().all()
         .when()
-        .get("/download/1/2/file.jpg")
+            .get("/download/1/file.jpg")
         .then()
-        .contentType("image/jpeg")
-        .statusCode(200);
+            .contentType("image/jpeg")
+            .statusCode(200);
+    }
+    
+    @Test
+    public void testDownloadJpgFileWithOwnerId() {
+        given()
+            .log().all()
+        .when()
+            .get("/download/1/2/file.jpg")
+        .then()
+            .contentType("image/jpeg")
+            .statusCode(200);
     }
     
     @Test
     public void testDownloadBinFile() {
         given()
-        .log().all()
+            .log().all()
         .when()
-        .get("/download/1/2/file.bin")
+            .get("/download/1/file.bin")
         .then()
-        .contentType(MediaType.APPLICATION_OCTET_STREAM)
-        .statusCode(200);
+            .contentType(MediaType.APPLICATION_OCTET_STREAM)
+            .statusCode(200);
+    }
+    
+    @Test
+    public void testDownloadBinFileWithOwnerId() {
+        given()
+            .log().all()
+        .when()
+            .get("/download/1/2/file.bin")
+        .then()
+            .contentType(MediaType.APPLICATION_OCTET_STREAM)
+            .statusCode(200);
     }
 
     // Mocks ------------------------------------------------------------------

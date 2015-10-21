@@ -50,7 +50,7 @@ public class AuthenticationTest {
     public void testAuthenticate() {
         final String username = "user1";
         final String password = "password123!";
-//        ValidatableResponse response =
+
         given()
             .log().all()
         .when()
