@@ -44,7 +44,7 @@ public class Download {
     
     @PermitAll
     @GET
-    @Path("/{accessToken:[^/]+}{owner:(/[^/]+?)?}/{filePath:.+}")
+    @Path("/{accessToken:[^/]+}/{owner:[^/]+}/{filePath:.+}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response getFile(
             @PathParam("accessToken") String accessToken, 
@@ -52,15 +52,11 @@ public class Download {
             @PathParam("filePath") String filePath) {
         StorageUser user = getUserFromAccessToken(accessToken);
 
-        File file = null;
-        if (owner != null && !owner.isEmpty()) {
-            owner = owner.substring(1);
-            file = getStorageLogic().getFile(user, owner, filePath);
+        if (owner == null || owner.isEmpty()) {
+           throw new WebApplicationException(Status.BAD_REQUEST);
+        } 
 
-        } else {
-            file = getStorageLogic().getFile(user, filePath);
-        }
-       
+        File file = getStorageLogic().getFile(user, filePath);
         if (file == null || !file.exists()) {
             throw new WebApplicationException(Status.NOT_FOUND);
         }

@@ -30,6 +30,9 @@ public class DownloadTest {
     private static final File HTML_FILE = new File(DownloadTest.class.getResource("/file.html").getFile());
     private static final File JPG_FILE = new File(DownloadTest.class.getResource("/file.jpg").getFile());
     private static final File BIN_FILE = new File(DownloadTest.class.getResource("/file.bin").getFile());
+    
+    private static final String ACCESS_TOKEN = "TOK1";
+    private static final String OWNER_ID = "1";
 
     @BeforeClass
     public static void setUpBeforeClass() {			
@@ -49,19 +52,7 @@ public class DownloadTest {
         given()
             .log().all()
         .when()
-            .get("/download/1/file.html")
-        .then()
-            .log().all()
-            .contentType(MediaType.TEXT_HTML)
-            .statusCode(200);
-    }
-
-    @Test
-    public void testDownloadHtmlFileWithOwnerId() {
-        given()
-            .log().all()
-        .when()
-            .get("/download/1/2/file.html")
+            .get(String.format("/download/%s/%s/file.html", ACCESS_TOKEN, OWNER_ID))
         .then()
             .log().all()
             .contentType(MediaType.TEXT_HTML)
@@ -73,18 +64,7 @@ public class DownloadTest {
         given()
             .log().all()
         .when()
-            .get("/download/1/file.jpg")
-        .then()
-            .contentType("image/jpeg")
-            .statusCode(200);
-    }
-    
-    @Test
-    public void testDownloadJpgFileWithOwnerId() {
-        given()
-            .log().all()
-        .when()
-            .get("/download/1/2/file.jpg")
+            .get(String.format("/download/%s/%s/file.jpg", ACCESS_TOKEN, OWNER_ID))
         .then()
             .contentType("image/jpeg")
             .statusCode(200);
@@ -95,18 +75,7 @@ public class DownloadTest {
         given()
             .log().all()
         .when()
-            .get("/download/1/file.bin")
-        .then()
-            .contentType(MediaType.APPLICATION_OCTET_STREAM)
-            .statusCode(200);
-    }
-    
-    @Test
-    public void testDownloadBinFileWithOwnerId() {
-        given()
-            .log().all()
-        .when()
-            .get("/download/1/2/file.bin")
+            .get(String.format("/download/%s/%s/file.bin", ACCESS_TOKEN, OWNER_ID))
         .then()
             .contentType(MediaType.APPLICATION_OCTET_STREAM)
             .statusCode(200);
