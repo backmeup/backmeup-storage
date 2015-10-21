@@ -36,6 +36,11 @@
             <version>${version.org.backmeup.keyserver}</version>
         </dependency>
         <dependency>
+            <groupId>org.backmeup</groupId>
+            <artifactId>backmeup-keyserver-fileencryption</artifactId>
+            <version>${version.org.backmeup.keyserver}</version>
+        </dependency>
+        <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>${version.ch.qos.logback}</version>
