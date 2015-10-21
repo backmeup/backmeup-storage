@@ -21,13 +21,19 @@
         </dependency>
         <dependency>
             <groupId>org.backmeup</groupId>
+            <artifactId>backmeup-model</artifactId>
+            <version>${version.org.backmeup}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.backmeup</groupId>
             <artifactId>backmeup-service-client</artifactId>
             <version>${version.org.backmeup}</version>
         </dependency>
         <dependency>
             <groupId>org.backmeup</groupId>
             <artifactId>backmeup-keyserver-client</artifactId>
-            <version>1.1-SNAPSHOT</version>
+            <version>${version.org.backmeup.keyserver}</version>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
