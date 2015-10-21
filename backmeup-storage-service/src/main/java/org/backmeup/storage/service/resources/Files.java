@@ -44,10 +44,20 @@ public class Files {
     @GET
     @Path("/{path:[^/]+.*}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    public Response getFile(@PathParam("path") String filePath, @Context SecurityContext securityContext) {
+    public Response getFile(
+            @PathParam("path") String filePath, 
+            @QueryParam("owner") String owner,
+            @Context SecurityContext securityContext) {
         StorageUser user = getUserFromContext(securityContext);
 
-        File file = getStorageLogic().getFile(user, filePath);
+        File file = null;
+        if (owner != null && !owner.isEmpty()) {
+            file = getStorageLogic().getFile(user, owner, filePath);
+
+        } else {
+            file = getStorageLogic().getFile(user, filePath);
+        }
+        
         if (file == null || !file.exists()) {
             throw new WebApplicationException(Status.NOT_FOUND);
         }

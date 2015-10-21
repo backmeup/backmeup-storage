@@ -44,12 +44,23 @@ public class Download {
     
     @PermitAll
     @GET
-    @Path("/{accessToken:[^/]+}/{filePath:.+}")
+    @Path("/{accessToken:[^/]+}{owner:(/[^/]+?)?}/{filePath:.+}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    public Response getFile(@PathParam("accessToken") String accessToken, @PathParam("filePath") String filePath) {
+    public Response getFile(
+            @PathParam("accessToken") String accessToken, 
+            @PathParam("owner") String owner,
+            @PathParam("filePath") String filePath) {
         StorageUser user = getUserFromAccessToken(accessToken);
 
-        File file = getStorageLogic().getFile(user, filePath);
+        File file = null;
+        if (owner != null && !owner.isEmpty()) {
+            owner = owner.substring(1);
+            file = getStorageLogic().getFile(user, owner, filePath);
+
+        } else {
+            file = getStorageLogic().getFile(user, filePath);
+        }
+       
         if (file == null || !file.exists()) {
             throw new WebApplicationException(Status.NOT_FOUND);
         }
@@ -65,8 +76,6 @@ public class Download {
                     .ok(file)
                     .type(mediaType)
                     .build();
-                    //.header("Content-Disposition",
-                    //        "attachment; filename=" + file.getName()).build();
         } catch (IOException e) {
             throw new WebApplicationException(Status.NOT_FOUND);
         }

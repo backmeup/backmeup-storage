@@ -45,6 +45,15 @@ public class LocalFilesystemStorage implements StorageLogic {
         
         return new File(filePath.toAbsolutePath().toString());
     }
+    
+    @Override
+    public File getFile(StorageUser user, String owner, String path) {
+        final String userPath = getUserFilePath(path, user, owner);
+        final String completePath = BASE_PATH + userPath;
+        final Path filePath = Paths.get(completePath);
+        
+        return new File(filePath.toAbsolutePath().toString());
+    }
 
     @Override
     public Metadata saveFile(StorageUser user, String filePath, boolean overwrite, long contentLength, InputStream content) {
@@ -102,5 +111,9 @@ public class LocalFilesystemStorage implements StorageLogic {
     
     protected String getUserFilePath(String filePath, StorageUser user) {
         return "/" + user.getUserId() + "/" + filePath;
+    }
+    
+    protected String getUserFilePath(String filePath, StorageUser user, String ownerId) {
+        return "/" + ownerId + "/" + filePath;
     }
 }

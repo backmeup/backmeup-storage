@@ -46,11 +46,10 @@ public class DownloadTest {
 
     @Test
     public void testDownloadHtmlFile() {
-		//accessToken = 1
         given()
         .log().all()
         .when()
-        .get("/download/1/file.html")
+        .get("/download/1/2/file.html")
         .then()
         .log().all()
         .contentType(MediaType.TEXT_HTML)
@@ -62,7 +61,7 @@ public class DownloadTest {
         given()
         .log().all()
         .when()
-        .get("/download/1/file.jpg")
+        .get("/download/1/2/file.jpg")
         .then()
         .contentType("image/jpeg")
         .statusCode(200);
@@ -73,7 +72,7 @@ public class DownloadTest {
         given()
         .log().all()
         .when()
-        .get("/download/1/file.bin")
+        .get("/download/1/2/file.bin")
         .then()
         .contentType(MediaType.APPLICATION_OCTET_STREAM)
         .statusCode(200);

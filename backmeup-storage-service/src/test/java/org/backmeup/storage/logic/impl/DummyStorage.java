@@ -31,6 +31,11 @@ public class DummyStorage implements StorageLogic {
     public File getFile(StorageUser user, String path) {
         return files.get(path);
     }
+    
+    @Override
+    public File getFile(StorageUser user, String owner, String path) {
+        return files.get(path);
+    }
 
     @Override
     public Metadata saveFile(StorageUser user, String filePath, boolean overwrite, long contentLength, InputStream content) {
