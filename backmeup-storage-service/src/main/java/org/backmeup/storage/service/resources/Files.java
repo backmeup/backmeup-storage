@@ -1,7 +1,8 @@
 package org.backmeup.storage.service.resources;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Paths;
 
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
@@ -50,21 +51,21 @@ public class Files {
             @Context SecurityContext securityContext) {
         StorageUser user = getUserFromContext(securityContext);
 
-        File file = null;
-        if (owner != null && !owner.isEmpty()) {
-            file = getStorageLogic().getFile(user, owner, filePath);
-
-        } else {
-            file = getStorageLogic().getFile(user, filePath);
+        String ownerId = owner;
+        if (ownerId == null || ownerId.isEmpty()) {
+            ownerId = user.getUserId().toString();
         }
         
-        if (file == null || !file.exists()) {
+        InputStream file = getStorageLogic().getFileAsInputStream(user, ownerId, filePath);
+        if (file == null) {
             throw new WebApplicationException(Status.NOT_FOUND);
         }
+        
+        java.nio.file.Path p = Paths.get(filePath);
         return Response
                 .ok(file)
                 .header("Content-Disposition",
-                        "attachment; filename=" + file.getName()).build();
+                        "attachment; filename=" + p.getFileName().toString()).build();
     }
 
     @RolesAllowed(AuthRoles.USER)

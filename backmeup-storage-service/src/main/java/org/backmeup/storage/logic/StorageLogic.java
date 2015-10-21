@@ -12,5 +12,7 @@ public interface StorageLogic {
 
     File getFile(StorageUser user, String owner, String path);
 
+    InputStream getFileAsInputStream(StorageUser user, String owner, String path);
+
     Metadata saveFile(StorageUser user, String filePath, boolean overwrite, long contentLength, InputStream content);
 }

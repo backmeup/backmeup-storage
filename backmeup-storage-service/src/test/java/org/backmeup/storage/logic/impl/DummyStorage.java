@@ -1,10 +1,15 @@
 package org.backmeup.storage.logic.impl;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response.Status;
 
 import org.backmeup.storage.logic.StorageLogic;
 import org.backmeup.storage.model.Metadata;
@@ -35,6 +40,15 @@ public class DummyStorage implements StorageLogic {
     @Override
     public File getFile(StorageUser user, String owner, String path) {
         return files.get(path);
+    }
+    
+    @Override
+    public InputStream getFileAsInputStream(StorageUser user, String owner, String path) {
+        try {
+            return new FileInputStream(files.get(path));
+        } catch (FileNotFoundException e) {
+            throw new WebApplicationException(Status.NOT_FOUND);
+        }
     }
 
     @Override

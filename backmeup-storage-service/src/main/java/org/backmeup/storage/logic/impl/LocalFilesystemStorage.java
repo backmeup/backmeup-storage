@@ -1,6 +1,7 @@
 package org.backmeup.storage.logic.impl;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,7 +40,12 @@ public class LocalFilesystemStorage implements StorageLogic {
 
     @Override
     public File getFile(StorageUser user, String path) {
-        final String userPath = getUserFilePath(path, user);
+        return getFile(user, user.getUserId().toString(), path);
+    }
+    
+    @Override
+    public File getFile(StorageUser user, String owner, String path) {
+        final String userPath = getUserFilePath(path, owner);
         final String completePath = BASE_PATH + userPath;
         final Path filePath = Paths.get(completePath);
         
@@ -47,17 +53,19 @@ public class LocalFilesystemStorage implements StorageLogic {
     }
     
     @Override
-    public File getFile(StorageUser user, String owner, String path) {
-        final String userPath = getUserFilePath(path, user, owner);
-        final String completePath = BASE_PATH + userPath;
-        final Path filePath = Paths.get(completePath);
-        
-        return new File(filePath.toAbsolutePath().toString());
+    public InputStream getFileAsInputStream(StorageUser user, String owner, String path) {
+        try {
+            File file = getFile(user, owner, path);
+            return new FileInputStream(file);
+        } catch (IOException e) {
+            LOGGER.error("", e);
+            throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @Override
     public Metadata saveFile(StorageUser user, String filePath, boolean overwrite, long contentLength, InputStream content) {
-        final String userFilePath = getUserFilePath(filePath, user);
+        final String userFilePath = getUserFilePath(filePath, user.getUserId().toString());
         final String completePath = BASE_PATH + userFilePath;
         final Path path = Paths.get(completePath);
 
@@ -109,11 +117,7 @@ public class LocalFilesystemStorage implements StorageLogic {
         return new Metadata(totalLength, hash, new Date(), filePath);
     }
     
-    protected String getUserFilePath(String filePath, StorageUser user) {
-        return "/" + user.getUserId() + "/" + filePath;
-    }
-    
-    protected String getUserFilePath(String filePath, StorageUser user, String ownerId) {
-        return "/" + ownerId + "/" + filePath;
+    protected String getUserFilePath(String filePath, String userId) {
+        return "/" + userId + "/" + filePath;
     }
 }
