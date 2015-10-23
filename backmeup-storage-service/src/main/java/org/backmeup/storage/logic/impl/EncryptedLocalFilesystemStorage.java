@@ -23,6 +23,7 @@ import javax.ws.rs.core.Response.Status;
 import org.backmeup.keyserver.client.KeyserverClient;
 import org.backmeup.keyserver.fileencryption.EncryptionInputStream;
 import org.backmeup.keyserver.fileencryption.EncryptionOutputStream;
+import org.backmeup.keyserver.fileencryption.Keystore;
 import org.backmeup.keyserver.model.KeyserverException;
 import org.backmeup.keyserver.model.Token.Kind;
 import org.backmeup.keyserver.model.dto.TokenDTO;
@@ -36,15 +37,13 @@ import org.slf4j.LoggerFactory;
 
 @Named
 @RequestScoped
-public @Alternative 
-class EncryptedLocalFilesystemStorage implements StorageLogic {
+public @Alternative class EncryptedLocalFilesystemStorage implements StorageLogic {
     private static final Logger LOGGER = LoggerFactory.getLogger(EncryptedLocalFilesystemStorage.class);
     private static final String BASE_PATH = Configuration.getProperty("backmeup.storage.home");
     private static final String DIGEST_ALGORITHM = "MD5";
-    
+
     @Inject
     private KeyserverClient keyserverClient;
-
 
     public EncryptedLocalFilesystemStorage() {
 
@@ -54,23 +53,23 @@ class EncryptedLocalFilesystemStorage implements StorageLogic {
     public File getFile(StorageUser user, String path) {
         return getFile(user, user.getUserId().toString(), path);
     }
-    
+
     @Override
     public File getFile(StorageUser user, String owner, String path) {
         final String userPath = getUserFilePath(path, owner);
         final String completePath = BASE_PATH + userPath;
         final Path filePath = Paths.get(completePath);
-        
+
         return new File(filePath.toAbsolutePath().toString());
     }
-    
+
     @Override
     public InputStream getFileAsInputStream(StorageUser user, String owner, String path) {
         File file = getFile(user, owner, path);
         PrivateKey privateKey = null;
         try {
             TokenDTO token = new TokenDTO(Kind.INTERNAL, user.getAuthToken());
-            byte[] privKey = keyserverClient.getPrivateKey(token);
+            byte[] privKey = this.keyserverClient.getPrivateKey(token);
             privateKey = KeyserverClient.decodePrivateKey(privKey);
             return new EncryptionInputStream(file, user.getUserId().toString(), privateKey);
         } catch (KeyserverException | IOException e) {
@@ -84,11 +83,11 @@ class EncryptedLocalFilesystemStorage implements StorageLogic {
         final String userFilePath = getUserFilePath(filePath, user.getUserId().toString());
         final String completePath = BASE_PATH + userFilePath;
         final Path path = Paths.get(completePath);
-        
+
         PublicKey publicKey;
         try {
             TokenDTO token = new TokenDTO(Kind.INTERNAL, user.getAuthToken());
-            byte[] pubKey = keyserverClient.getPublicKey(token);
+            byte[] pubKey = this.keyserverClient.getPublicKey(token);
             publicKey = KeyserverClient.decodePublicKey(pubKey);
         } catch (KeyserverException e) {
             LOGGER.error("", e);
@@ -110,10 +109,11 @@ class EncryptedLocalFilesystemStorage implements StorageLogic {
         long totalLength = 0;
 
         File parent = new File(path.getParent().toAbsolutePath().toString());
-        if(!parent.mkdirs()) {
+        if (!parent.mkdirs()) {
             LOGGER.info("Unable to create parent directory " + parent);
             // maybe throw a filenotfoundexception
-        };
+        }
+        ;
 
         if (!file.canWrite()) {
             file.setWritable(true);
@@ -142,8 +142,42 @@ class EncryptedLocalFilesystemStorage implements StorageLogic {
         }
         return new Metadata(totalLength, hash, new Date(), filePath);
     }
-    
+
+    @Override
+    public void addFileAccessRights(StorageUser user, String filePath) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void removeFileAccessRights(StorageUser user, String filePath) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public boolean hasFileAccessRights(StorageUser user, String owner, String filePath) {
+        final String userFilePath = getUserFilePath(filePath, owner);
+        final String completePath = BASE_PATH + userFilePath;
+        final Path path = Paths.get(completePath);
+
+        File file = new File(path.toAbsolutePath().toString());
+        if ((!file.exists() || (!file.canRead()))) {
+            throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
+        }
+        try {
+            //check on the user's access rights on this file        
+            Keystore ks = EncryptionInputStream.getKeystore(file);
+            //TODO also allow checking for other userID's access rights not only for the user himself/herself
+            return ks.hasReceiver(user.getUserId() + "");
+        } catch (IOException e) {
+            LOGGER.error("", e);
+            throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     protected String getUserFilePath(String filePath, String userId) {
         return "/" + userId + "/" + filePath;
     }
+
 }

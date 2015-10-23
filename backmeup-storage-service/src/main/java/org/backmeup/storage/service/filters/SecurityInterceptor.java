@@ -35,17 +35,18 @@ public class SecurityInterceptor implements ContainerRequestFilter {
     private static final String AUTHORIZATION_PROPERTY = "Authorization";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SecurityInterceptor.class);
-    
+
     @Inject
     private KeyserverClient keyserverClient;
 
     @Override
     public void filter(ContainerRequestContext requestContext) {
-        ResourceMethodInvoker methodInvoker = (ResourceMethodInvoker) requestContext.getProperty("org.jboss.resteasy.core.ResourceMethodInvoker");
+        ResourceMethodInvoker methodInvoker = (ResourceMethodInvoker) requestContext
+                .getProperty("org.jboss.resteasy.core.ResourceMethodInvoker");
         Method method = methodInvoker.getMethod();
 
-        if( !method.isAnnotationPresent(PermitAll.class)) {
-            if(method.isAnnotationPresent(DenyAll.class)) {
+        if (!method.isAnnotationPresent(PermitAll.class)) {
+            if (method.isAnnotationPresent(DenyAll.class)) {
                 requestContext.abortWith(ACCESS_FORBIDDEN);
                 return;
             }
@@ -53,7 +54,6 @@ public class SecurityInterceptor implements ContainerRequestFilter {
             // Get authorization header
             final MultivaluedMap<String, String> headers = requestContext.getHeaders();
             final List<String> authorization = headers.get(AUTHORIZATION_PROPERTY);
-
 
             // If no authorization header, deny access
             if (authorization == null || authorization.isEmpty()) {
@@ -70,12 +70,12 @@ public class SecurityInterceptor implements ContainerRequestFilter {
                 Set<String> rolesSet = new HashSet<>(Arrays.asList(rolesAnnotation.value()));
 
                 StorageUser user = resolveUser(accessToken);
-                if(user == null) {
+                if (user == null) {
                     requestContext.abortWith(ACCESS_DENIED);
                     return;
                 }
 
-                if( !isUserAllowed(user, rolesSet)) {
+                if (!isUserAllowed(user, rolesSet)) {
                     requestContext.abortWith(ACCESS_DENIED);
                     return;
                 }
@@ -88,11 +88,19 @@ public class SecurityInterceptor implements ContainerRequestFilter {
     private StorageUser resolveUser(final String accessToken) {
         try {
             TokenDTO token = new TokenDTO(Kind.INTERNAL, accessToken);
-            AuthResponseDTO response = keyserverClient.authenticateWithInternalToken(token);
+            AuthResponseDTO response = this.keyserverClient.authenticateWithInternalToken(token);
             String userId = response.getUsername();
-
             LOGGER.info("Resolved user with id: " + userId);
 
+            return new StorageUser(Long.parseLong(userId), accessToken);
+        } catch (KeyserverException ke) {
+            LOGGER.info("", ke);
+        }
+        try {
+            //try different way of parsing token
+            AuthResponseDTO response = this.keyserverClient.authenticateWithInternalToken(TokenDTO.fromTokenString(accessToken));
+            String userId = response.getUsername();
+            LOGGER.info("Resolved user with id: " + userId);
             return new StorageUser(Long.parseLong(userId), accessToken);
         } catch (KeyserverException ke) {
             LOGGER.info("", ke);

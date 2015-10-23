@@ -33,7 +33,6 @@ public class LocalFilesystemStorage implements StorageLogic {
     private static final String BASE_PATH = Configuration.getProperty("backmeup.storage.home");
     private static final String DIGEST_ALGORITHM = "MD5";
 
-
     public LocalFilesystemStorage() {
 
     }
@@ -42,16 +41,16 @@ public class LocalFilesystemStorage implements StorageLogic {
     public File getFile(StorageUser user, String path) {
         return getFile(user, user.getUserId().toString(), path);
     }
-    
+
     @Override
     public File getFile(StorageUser user, String owner, String path) {
         final String userPath = getUserFilePath(path, owner);
         final String completePath = BASE_PATH + userPath;
         final Path filePath = Paths.get(completePath);
-        
+
         return new File(filePath.toAbsolutePath().toString());
     }
-    
+
     @Override
     public InputStream getFileAsInputStream(StorageUser user, String owner, String path) {
         try {
@@ -84,10 +83,11 @@ public class LocalFilesystemStorage implements StorageLogic {
         long totalLength = 0;
 
         File parent = new File(path.getParent().toAbsolutePath().toString());
-        if(!parent.mkdirs()) {
+        if (!parent.mkdirs()) {
             LOGGER.info("Unable to create parent directory " + parent);
             // maybe throw a filenotfoundexception
-        };
+        }
+        ;
 
         if (!file.canWrite()) {
             file.setWritable(true);
@@ -116,8 +116,32 @@ public class LocalFilesystemStorage implements StorageLogic {
         }
         return new Metadata(totalLength, hash, new Date(), filePath);
     }
-    
+
     protected String getUserFilePath(String filePath, String userId) {
         return "/" + userId + "/" + filePath;
+    }
+
+    @Override
+    public void addFileAccessRights(StorageUser user, String filePath) {
+        //not required on non encrypted file system
+    }
+
+    @Override
+    public void removeFileAccessRights(StorageUser user, String filePath) {
+        //not required on non encrypted file system
+    }
+
+    @Override
+    public boolean hasFileAccessRights(StorageUser user, String owner, String filePath) {
+        final String userFilePath = getUserFilePath(filePath, owner);
+        final String completePath = BASE_PATH + userFilePath;
+        final Path path = Paths.get(completePath);
+
+        File file = new File(path.toAbsolutePath().toString());
+        if ((!file.exists() || (!file.canRead()))) {
+            throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
+        }
+        //for non-encrypted storage 
+        return true;
     }
 }

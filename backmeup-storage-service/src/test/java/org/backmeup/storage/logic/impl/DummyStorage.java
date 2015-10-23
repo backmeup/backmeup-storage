@@ -34,18 +34,18 @@ public class DummyStorage implements StorageLogic {
 
     @Override
     public File getFile(StorageUser user, String path) {
-        return files.get(path);
+        return this.files.get(path);
     }
-    
+
     @Override
     public File getFile(StorageUser user, String owner, String path) {
-        return files.get(path);
+        return this.files.get(path);
     }
-    
+
     @Override
     public InputStream getFileAsInputStream(StorageUser user, String owner, String path) {
         try {
-            return new FileInputStream(files.get(path));
+            return new FileInputStream(this.files.get(path));
         } catch (FileNotFoundException e) {
             throw new WebApplicationException(Status.NOT_FOUND);
         }
@@ -55,6 +55,21 @@ public class DummyStorage implements StorageLogic {
     public Metadata saveFile(StorageUser user, String filePath, boolean overwrite, long contentLength, InputStream content) {
         File file = getFile(user, "should return the only file for any key");
         return new Metadata(file.length(), "900150983cd24fb0d6963f7d28e17f72", new Date(), file.getPath());
+    }
+
+    @Override
+    public void addFileAccessRights(StorageUser user, String filePath) {
+        // only required for encrypted storage
+    }
+
+    @Override
+    public void removeFileAccessRights(StorageUser user, String filePath) {
+        // only required for encrypted storage
+    }
+
+    @Override
+    public boolean hasFileAccessRights(StorageUser user, String owner, String filePath) {
+        return true;
     }
 
 }

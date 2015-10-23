@@ -22,6 +22,7 @@ import org.backmeup.storage.api.StorageClient;
 import org.backmeup.storage.client.config.Configuration;
 import org.backmeup.storage.client.model.auth.AuthInfo;
 import org.backmeup.storage.model.Metadata;
+import org.backmeup.storage.model.StorageUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +34,7 @@ public class BackmeupStorageClient implements StorageClient {
     private static final Logger LOGGER = LoggerFactory.getLogger(BackmeupStorageClient.class);
 
     private static final String FILE_RESOURCE = "/files";
+    private static final String FILE_RESOURCE_RIGHTS = "/files/rights";
     private static final String AUTH_RESOURCE = "/authenticate";
 
     private final String serviceUrl;
@@ -52,8 +54,7 @@ public class BackmeupStorageClient implements StorageClient {
 
     private CloseableHttpClient createClient() {
         // set the connection timeout value to 10 seconds (10000 milliseconds)
-        RequestConfig requestConfig = RequestConfig.custom().setConnectTimeout(10 * 1000).setSocketTimeout(10 * 1000)
-                .build();
+        RequestConfig requestConfig = RequestConfig.custom().setConnectTimeout(10 * 1000).setSocketTimeout(10 * 1000).build();
         return HttpClientBuilder.create().setDefaultRequestConfig(requestConfig).build();
     }
 
@@ -113,8 +114,7 @@ public class BackmeupStorageClient implements StorageClient {
     }
 
     @Override
-    public Metadata saveFile(String accessToken, String targetPath, boolean overwrite, long numBytes, InputStream data)
-            throws IOException {
+    public Metadata saveFile(String accessToken, String targetPath, boolean overwrite, long numBytes, InputStream data) throws IOException {
         LOGGER.info("URL: " + this.serviceUrl + "");
 
         URI full = null;
@@ -166,8 +166,7 @@ public class BackmeupStorageClient implements StorageClient {
         URI full = null;
         try {
             URI base = new URI(this.serviceUrl + FILE_RESOURCE);
-            full = new URI(base.getScheme(), base.getAuthority(), base.getPath().replaceAll("//", "/") + path, null,
-                    null);
+            full = new URI(base.getScheme(), base.getAuthority(), base.getPath().replaceAll("//", "/") + path, null, null);
         } catch (URISyntaxException e) {
             LOGGER.error("cannot parse uri", e);
             throw new IOException(e);
@@ -196,6 +195,54 @@ public class BackmeupStorageClient implements StorageClient {
         }
     }
 
+    @Override
+    public void addFileAccessRights(StorageUser user, String filePath) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void removeFileAccessRights(StorageUser user, String filePath) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public boolean hasFileAccessRights(String accessToken, String ownerId, String filePath, String kscurrUserId, Long BMUcurrUserId)
+            throws IOException {
+        URI full = null;
+        try {
+            URI base = new URI(this.serviceUrl + FILE_RESOURCE_RIGHTS);
+            full = new URI(base.getScheme(), base.getAuthority(), base.getPath().replaceAll("//", "/") + "/" + ownerId + "/" + filePath,
+                    "accesstoken=" + accessToken + "&" + "ksuserid=" + kscurrUserId + "&bmuuserid=" + BMUcurrUserId, null);
+        } catch (URISyntaxException e) {
+            LOGGER.error("cannot parse uri", e);
+            throw new IOException(e);
+        }
+
+        HttpGet httpGet = new HttpGet(full);
+        //httpGet.addHeader("Authorization", accessToken);
+        CloseableHttpResponse response = this.client.execute(httpGet);
+
+        int status = response.getStatusLine().getStatusCode();
+        if (HttpStatus.SC_OK != status) {
+            LOGGER.error("Request failed with status code: " + status);
+            throw new IOException("Request failed with status code: " + status);
+        }
+
+        try {
+            HttpEntity respEntity = response.getEntity();
+            ObjectMapper mapper = createJsonMapper();
+            Boolean hasAccess = mapper.readValue(respEntity.getContent(), Boolean.class);
+            // release all resources held by httpentity
+            EntityUtils.consume(respEntity);
+            return hasAccess;
+        } catch (Exception e) {
+            LOGGER.error("", e);
+            throw new IOException(e);
+        } finally {
+            response.close();
+        }
+    }
+
     private ObjectMapper createJsonMapper() {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setSerializationInclusion(Include.NON_NULL);
@@ -203,4 +250,5 @@ public class BackmeupStorageClient implements StorageClient {
         objectMapper.configure(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES, false);
         return objectMapper;
     }
+
 }
