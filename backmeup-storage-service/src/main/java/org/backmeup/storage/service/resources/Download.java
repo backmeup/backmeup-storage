@@ -1,8 +1,9 @@
 package org.backmeup.storage.service.resources;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import javax.annotation.security.PermitAll;
 import javax.enterprise.context.RequestScoped;
@@ -56,13 +57,14 @@ public class Download {
            throw new WebApplicationException(Status.BAD_REQUEST);
         } 
 
-        File file = getStorageLogic().getFile(user, filePath);
-        if (file == null || !file.exists()) {
+        InputStream file = getStorageLogic().getFileAsInputStream(user, owner, filePath);
+        if (file == null) {
             throw new WebApplicationException(Status.NOT_FOUND);
         }
-
+        
+        java.nio.file.Path p = Paths.get(filePath);
         try {
-            String mediaType = Files.probeContentType(file.toPath());
+            String mediaType = Files.probeContentType(p);
 
             if(mediaType == null){
                 mediaType = MediaType.APPLICATION_OCTET_STREAM;
