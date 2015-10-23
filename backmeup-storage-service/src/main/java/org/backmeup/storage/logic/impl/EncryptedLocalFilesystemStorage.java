@@ -156,7 +156,7 @@ public @Alternative class EncryptedLocalFilesystemStorage implements StorageLogi
     }
 
     @Override
-    public boolean hasFileAccessRights(StorageUser user, String owner, String filePath) {
+    public boolean hasFileAccessRights(Long userIdToCheck, String owner, String filePath) {
         final String userFilePath = getUserFilePath(filePath, owner);
         final String completePath = BASE_PATH + userFilePath;
         final Path path = Paths.get(completePath);
@@ -169,7 +169,7 @@ public @Alternative class EncryptedLocalFilesystemStorage implements StorageLogi
             //check on the user's access rights on this file        
             Keystore ks = EncryptionInputStream.getKeystore(file);
             //TODO also allow checking for other userID's access rights not only for the user himself/herself
-            return ks.hasReceiver(user.getUserId() + "");
+            return ks.hasReceiver(userIdToCheck + "");
         } catch (IOException e) {
             LOGGER.error("", e);
             throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);

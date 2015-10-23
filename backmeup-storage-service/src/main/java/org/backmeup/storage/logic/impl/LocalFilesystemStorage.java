@@ -132,7 +132,7 @@ public class LocalFilesystemStorage implements StorageLogic {
     }
 
     @Override
-    public boolean hasFileAccessRights(StorageUser user, String owner, String filePath) {
+    public boolean hasFileAccessRights(Long userIdToCheck, String owner, String filePath) {
         final String userFilePath = getUserFilePath(filePath, owner);
         final String completePath = BASE_PATH + userFilePath;
         final Path path = Paths.get(completePath);

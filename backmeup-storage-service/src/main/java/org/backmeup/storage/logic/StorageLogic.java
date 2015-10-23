@@ -21,5 +21,5 @@ public interface StorageLogic {
     //TODO still needs to be defined
     void removeFileAccessRights(StorageUser user, String filePath);
 
-    boolean hasFileAccessRights(StorageUser user, String owner, String filePath);
+    boolean hasFileAccessRights(Long checkIdToCheck, String owner, String filePath);
 }

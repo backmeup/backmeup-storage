@@ -68,7 +68,7 @@ public class DummyStorage implements StorageLogic {
     }
 
     @Override
-    public boolean hasFileAccessRights(StorageUser user, String owner, String filePath) {
+    public boolean hasFileAccessRights(Long userIdToCheck, String owner, String filePath) {
         return true;
     }
 

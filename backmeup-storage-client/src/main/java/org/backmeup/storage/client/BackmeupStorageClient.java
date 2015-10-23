@@ -196,7 +196,7 @@ public class BackmeupStorageClient implements StorageClient {
     }
 
     @Override
-    public void addFileAccessRights(StorageUser user, String filePath) {
+    public void addFileAccessRights(String accessToken, String ownerId, String filePath, String kscurrUserId, Long BMUcurrUserId) {
         // TODO Auto-generated method stub
     }
 
@@ -206,13 +206,14 @@ public class BackmeupStorageClient implements StorageClient {
     }
 
     @Override
-    public boolean hasFileAccessRights(String accessToken, String ownerId, String filePath, String kscurrUserId, Long BMUcurrUserId)
-            throws IOException {
+    public boolean hasFileAccessRights(String accessToken, String ownerId, String filePath, String kscurrUserId, Long BMUcurrUserId,
+            Long checkUserId) throws IOException {
         URI full = null;
         try {
             URI base = new URI(this.serviceUrl + FILE_RESOURCE_RIGHTS);
             full = new URI(base.getScheme(), base.getAuthority(), base.getPath().replaceAll("//", "/") + "/" + ownerId + "/" + filePath,
-                    "accesstoken=" + accessToken + "&" + "ksuserid=" + kscurrUserId + "&bmuuserid=" + BMUcurrUserId, null);
+                    "accesstoken=" + accessToken + "&ksuserid=" + kscurrUserId + "&bmuuserid=" + BMUcurrUserId
+                            + (checkUserId != null ? "&checkuserid=" + checkUserId : ""), null);
         } catch (URISyntaxException e) {
             LOGGER.error("cannot parse uri", e);
             throw new IOException(e);

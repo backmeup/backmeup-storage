@@ -139,7 +139,8 @@ public class Files {
             @PathParam("owner") String owner,//
             @QueryParam("accesstoken") String accessToken, //
             @QueryParam("ksuserid") String currUserKSuserid,//
-            @QueryParam("bmuuserid") Long currUserBMUuserid)//
+            @QueryParam("bmuuserid") Long currUserBMUuserid,//
+            @QueryParam("checkuserid") Long userIdToCheck)//
             throws IOException {
         mandatory("path", filePath);
         mandatory("owner", owner);
@@ -148,8 +149,13 @@ public class Files {
         mandatory("bmuuserid", currUserBMUuserid);
 
         StorageUser currUser = getUserFromAccessToken(accessToken, currUserKSuserid, currUserBMUuserid);
-
-        Boolean access = getStorageLogic().hasFileAccessRights(currUser, owner, filePath);
+        Boolean access;
+        //decide: currentUser or a given userId to check?
+        if ((userIdToCheck != null) && (userIdToCheck != 0)) {
+            access = getStorageLogic().hasFileAccessRights(userIdToCheck, owner, filePath);
+        } else {
+            access = getStorageLogic().hasFileAccessRights(currUser.getUserId(), owner, filePath);
+        }
         return Response.ok(access).build();
     }
 
