@@ -15,11 +15,9 @@ public interface StorageLogic {
 
     Metadata saveFile(StorageUser user, String filePath, boolean overwrite, long contentLength, InputStream content);
 
-    //TODO still needs to be defined
-    void addFileAccessRights(StorageUser user, String filePath);
+    void addFileAccessRights(Long userIdToAdd, String ksUserIdToAdd, StorageUser currUser, String owner, String filePath);
 
-    //TODO still needs to be defined
-    void removeFileAccessRights(StorageUser user, String filePath);
+    void removeFileAccessRights(Long userIdToRemove, String ksUserIdToRemove, StorageUser currUser, String owner, String filePath);
 
-    boolean hasFileAccessRights(Long checkIdToCheck, String owner, String filePath);
+    boolean hasFileAccessRights(Long userIdToCheck, String owner, String filePath);
 }

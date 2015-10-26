@@ -58,18 +58,18 @@ public class DummyStorage implements StorageLogic {
     }
 
     @Override
-    public void addFileAccessRights(StorageUser user, String filePath) {
-        // only required for encrypted storage
-    }
-
-    @Override
-    public void removeFileAccessRights(StorageUser user, String filePath) {
-        // only required for encrypted storage
-    }
-
-    @Override
     public boolean hasFileAccessRights(Long userIdToCheck, String owner, String filePath) {
         return true;
+    }
+
+    @Override
+    public void addFileAccessRights(Long userIdToAdd, String ksUserIdToAdd, StorageUser currUser, String owner, String filePath) {
+        //not required without encryption
+    }
+
+    @Override
+    public void removeFileAccessRights(Long userIdToRemove, String ksUserIdToRemove, StorageUser currUser, String owner, String filePath) {
+        //not required without encryption
     }
 
 }

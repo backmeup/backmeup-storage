@@ -11,6 +11,7 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ContentType;
@@ -196,8 +197,28 @@ public class BackmeupStorageClient implements StorageClient {
     }
 
     @Override
-    public void addFileAccessRights(String accessToken, String ownerId, String filePath, String kscurrUserId, Long BMUcurrUserId) {
-        // TODO Auto-generated method stub
+    public void addFileAccessRights(String accessToken, String ownerId, String filePath, String kscurrUserId, Long BMUcurrUserId,
+            Long userToAddBMUUserId, String userToAddKSUserId) throws IOException {
+        URI full = null;
+        try {
+            URI base = new URI(this.serviceUrl + FILE_RESOURCE_RIGHTS);
+            full = new URI(base.getScheme(), base.getAuthority(), base.getPath().replaceAll("//", "/") + "/" + ownerId + "/" + filePath,
+                    "accesstoken=" + accessToken + "&ksuserid=" + kscurrUserId + "&bmuuserid=" + BMUcurrUserId + "&bmuuseridtoadd="
+                            + userToAddBMUUserId + "&ksuseridtoadd=" + userToAddKSUserId, null);
+        } catch (URISyntaxException e) {
+            LOGGER.error("cannot parse uri", e);
+            throw new IOException(e);
+        }
+
+        HttpPost httpPost = new HttpPost(full);
+        CloseableHttpResponse response = this.client.execute(httpPost);
+
+        int status = response.getStatusLine().getStatusCode();
+        if (HttpStatus.SC_OK != status) {
+            LOGGER.error("Request failed with status code: " + status);
+            throw new IOException("Request failed with status code: " + status);
+        }
+
     }
 
     @Override

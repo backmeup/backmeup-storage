@@ -13,6 +13,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -98,21 +99,35 @@ public class Files {
         return Response.ok(fileMetadata).build();
     }
 
-    /*@RolesAllowed(AuthRoles.USER)
-    @PUT
-    @Path("/rights/{path:[^/]+.*}")
-    @Consumes(MediaType.APPLICATION_OCTET_STREAM)
+    @PermitAll
+    @POST
+    @Path("/rights/{owner:[^/]+}/{path:[^/]+.*}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response addFileAccessRights(//
             @PathParam("path") String filePath, //
-            @Context HttpServletRequest request,//
-            @Context SecurityContext securityContext)//
+            @PathParam("owner") String owner,//
+            @QueryParam("accesstoken") String accessToken, //
+            @QueryParam("ksuserid") String currUserKSuserid,//
+            @QueryParam("bmuuserid") Long currUserBMUuserid,//
+            @QueryParam("bmuuseridtoadd") Long userToAddBMUId,//
+            @QueryParam("ksuseridtoadd") String userIdToAddKSId)//
             throws IOException {
+        mandatory("path", filePath);
+        mandatory("owner", owner);
+        mandatory("accesstoken", accessToken);
+        mandatory("ksuserid", currUserKSuserid);
+        mandatory("bmuuserid", currUserBMUuserid);
+        mandatory("bmuuseridtoadd", userToAddBMUId);
+        mandatory("ksuseridtoadd", userIdToAddKSId);
 
-        StorageUser user = getUserFromContext(securityContext);
+        StorageUser currUser = getUserFromAccessToken(accessToken, currUserKSuserid, currUserBMUuserid);
+        //current user grants access to file for userToAdd
+        getStorageLogic().addFileAccessRights(userToAddBMUId, userIdToAddKSId, currUser, owner, filePath);
+        return Response.ok().build();
 
-        //TODO CONTINUE HERE
-    }*/
+    }
+
+    //TODO AL WICHTIG DELETE OPERATION GEHT VOM SHARING PARTNER ALS ACTIVE USER AUS!!!
 
     /* @RolesAllowed(AuthRoles.USER)
      @DELETE

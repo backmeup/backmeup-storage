@@ -122,12 +122,12 @@ public class LocalFilesystemStorage implements StorageLogic {
     }
 
     @Override
-    public void addFileAccessRights(StorageUser user, String filePath) {
+    public void addFileAccessRights(Long bmuUserIdToAdd, String ksUserIdToAdd, StorageUser currUser, String owner, String filePath) {
         //not required on non encrypted file system
     }
 
     @Override
-    public void removeFileAccessRights(StorageUser user, String filePath) {
+    public void removeFileAccessRights(Long bmuUserIdToRemove, String ksUserIdToAdd, StorageUser currUser, String owner, String filePath) {
         //not required on non encrypted file system
     }
 

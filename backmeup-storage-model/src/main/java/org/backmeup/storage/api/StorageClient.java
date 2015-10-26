@@ -14,10 +14,19 @@ public interface StorageClient {
 
     void getFile(String accessToken, String path, OutputStream data) throws IOException;
 
-    //TODO still need to be defined
-    void addFileAccessRights(String accessToken, String ownerId, String filePath,String kscurrUserId, Long BMUcurrUserId);
+    /**
+     * Current user grants access rights for userToAdd on a given filePath within a given userspace e.g. owner1/file1.xml
+     * @param accessToken access token of the current user
+     * @param ownerId the upserspace prefix to look up the file for
+     * @param filePath the file path within a given userspace
+     * @param kscurrUserId keyserverUserId of the current user
+     * @param BMUcurrUserId backmeupUserId of the current user
+     * @param userToAddBMUUserId backmeupUserId of the user to add access rights for
+     * @param userToAddKSUserId keyserverUserId of the user to add access rights for
+     */
+    void addFileAccessRights(String accessToken, String ownerId, String filePath,String kscurrUserId, Long BMUcurrUserId, 
+            Long userToAddBMUUserId, String userToAddKSUserId) throws IOException;
 
-    //TODO still need to be defined
     void removeFileAccessRights(StorageUser user, String filePath);
 
     /**
@@ -26,7 +35,7 @@ public interface StorageClient {
      * 
      * @param accessToken access token of the current user
      * @param ownerId the userspace prefix to look up the file for
-     * @param filePath the file path withi a given userspace
+     * @param filePath the file path within a given userspace
      * @param kscurrUserId keyserverUserId of the current user
      * @param BMUcurrUserId backmeupUserId of the current user
      * @param checkUserId userId to check access rights for - if null access rights for the current user will be checked
