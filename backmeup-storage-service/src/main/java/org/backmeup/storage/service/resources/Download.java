@@ -17,8 +17,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.backmeup.index.client.UserMappingClientFactory;
 import org.backmeup.keyserver.client.KeyserverClient;
-import org.backmeup.keyserver.model.KeyserverException;
 import org.backmeup.keyserver.model.Token.Kind;
 import org.backmeup.keyserver.model.dto.AuthResponseDTO;
 import org.backmeup.keyserver.model.dto.TokenDTO;
@@ -37,6 +37,9 @@ public class Download {
 
     @Inject
     private KeyserverClient keyserverClient;
+
+    @Inject
+    private UserMappingClientFactory userMappingClientFactory;
 
     public StorageLogic getStorageLogic() {
         return this.storageLogic;
@@ -86,10 +89,11 @@ public class Download {
         try {
             TokenDTO token = new TokenDTO(Kind.INTERNAL, accessToken);
             AuthResponseDTO response = this.keyserverClient.authenticateWithInternalToken(token);
-            //TODO fix workaround; anonymous accounts don't have the BMU User ID stored
-            String userId = response.getUsername();
-            return new StorageUser(Long.parseLong(userId), accessToken);
-        } catch (KeyserverException ke) {
+            String ksUserId = response.getServiceUserId();
+            //call the user mapping REST service to lookup the matching BMUUserID
+            Long bmuUserId = this.userMappingClientFactory.getClient().getBMUUserID(ksUserId);
+            return new StorageUser(bmuUserId, accessToken);
+        } catch (Exception e) {
             throw new WebApplicationException(ACCESS_DENIED);
         }
     }

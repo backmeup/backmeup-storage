@@ -48,6 +48,7 @@
         <version.org.apache.httpcomponents.httpclient-osgi>4.3.5</version.org.apache.httpcomponents.httpclient-osgi>
         <version.org.apache.httpcomponents.httpcore-osgi>4.3.2</version.org.apache.httpcomponents.httpcore-osgi>
         <version.org.backmeup>2.0.0-SNAPSHOT</version.org.backmeup>
+		<version.org.backmeup.indexer>0.0.1-SNAPSHOT</version.org.backmeup.indexer>
         <version.org.backmeup.keyserver>1.1-SNAPSHOT</version.org.backmeup.keyserver>
         <version.org.jboss.resteasy>3.0.9.Final</version.org.jboss.resteasy>
         <version.org.jboss.weld.servlet>2.2.5.Final</version.org.jboss.weld.servlet>
