@@ -149,6 +149,12 @@ public @Alternative class EncryptedLocalFilesystemStorage implements StorageLogi
 
     @Override
     public void addFileAccessRights(Long bmuUserIdToAdd, String ksUserIdToAdd, StorageUser currUser, String owner, String filePath) {
+        //check if the user that we want to add already has access rights
+        boolean bAccess = hasFileAccessRights(bmuUserIdToAdd, owner, filePath);
+        if (bAccess) {
+            return;
+        }
+        //add access rights to the user
         File file = getFileFromStorage(filePath, owner);
         try {
             Keystore ks = EncryptionInputStream.getKeystore(file);
@@ -157,7 +163,7 @@ public @Alternative class EncryptedLocalFilesystemStorage implements StorageLogi
             //get the current user's private key
             PrivateKey currUserPrivKey = this.getStorageUserKSPrivateKey(token);
             //load secret key into keystore = same for all users of this file
-            byte[] fileKey = ks.getSecretKey(currUser.getUserId() + "", currUserPrivKey);
+            ks.getSecretKey(currUser.getUserId() + "", currUserPrivKey);
             PublicKey userToAddPubKey = this.getPublicKey(ksUserIdToAdd);
             //now add the additional user to the list of receivers
             ks.addReceiver(bmuUserIdToAdd + "", userToAddPubKey);
@@ -167,8 +173,8 @@ public @Alternative class EncryptedLocalFilesystemStorage implements StorageLogi
             LOGGER.debug("failed to modify keystore receiver list for user: {} on file: {}", bmuUserIdToAdd, file.getAbsolutePath());
             throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
         }
+        //check if access right changes were executed properly
         try {
-            //check if changes were executed properly
             boolean b = this.hasFileAccessRights(bmuUserIdToAdd, owner, filePath);
             if (!b) {
                 LOGGER.error("failed to add file access for user: {} with ks_userID: {} on file: {}; requested by user/owner: {}",
@@ -182,9 +188,41 @@ public @Alternative class EncryptedLocalFilesystemStorage implements StorageLogi
     }
 
     @Override
-    public void removeFileAccessRights(Long bmuUserIdToRemove, String ksUserIdToAdd, StorageUser currUser, String owner, String filePath) {
-        // TODO Auto-generated method stub
+    public void removeFileAccessRights(Long bmuUserIdToRemove, StorageUser currUser, String owner, String filePath) {
+        //check if the user that we want to add already has access rights
+        boolean bAccess = hasFileAccessRights(bmuUserIdToRemove, owner, filePath);
+        if (!bAccess) {
+            return;
+        }
         File file = getFileFromStorage(filePath, owner);
+        //revoke access rights from the user
+        try {
+            Keystore ks = EncryptionInputStream.getKeystore(file);
+            //get the access token for the current user
+            TokenDTO token = TokenDTO.fromTokenString(currUser.getAuthToken());
+            //get the current user's private key
+            PrivateKey currUserPrivKey = this.getStorageUserKSPrivateKey(token);
+            //load secret key into keystore = same for all users of this file
+            ks.getSecretKey(currUser.getUserId() + "", currUserPrivKey);
+            //now add the additional user to the list of receivers
+            ks.removeReceiver(bmuUserIdToRemove + "");
+            //save keystore
+            ((FileKeystore) ks).save();
+        } catch (Exception e) {
+            LOGGER.debug("failed to modify keystore receiver list for user: {} on file: {}", bmuUserIdToRemove, file.getAbsolutePath());
+            throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
+        }
+        //check if access right changes were executed properly
+        try {
+            boolean b = this.hasFileAccessRights(bmuUserIdToRemove, owner, filePath);
+            if (b) {
+                LOGGER.error("failed to remove file access for user: {} on file: {}; requested by user: {}", bmuUserIdToRemove,
+                        file.getAbsolutePath(), currUser.getUserId());
+                throw new Exception("failed to remove file access");
+            }
+        } catch (Exception e) {
+            throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @Override
@@ -193,7 +231,6 @@ public @Alternative class EncryptedLocalFilesystemStorage implements StorageLogi
         try {
             //check on the user's access rights on this file        
             Keystore ks = EncryptionInputStream.getKeystore(file);
-            //TODO also allow checking for other userID's access rights not only for the user himself/herself
             return ks.hasReceiver(userIdToCheck + "");
         } catch (IOException e) {
             LOGGER.error("", e);

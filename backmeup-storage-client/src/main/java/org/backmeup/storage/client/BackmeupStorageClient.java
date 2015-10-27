@@ -10,6 +10,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
@@ -23,7 +24,6 @@ import org.backmeup.storage.api.StorageClient;
 import org.backmeup.storage.client.config.Configuration;
 import org.backmeup.storage.client.model.auth.AuthInfo;
 import org.backmeup.storage.model.Metadata;
-import org.backmeup.storage.model.StorageUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -222,8 +222,27 @@ public class BackmeupStorageClient implements StorageClient {
     }
 
     @Override
-    public void removeFileAccessRights(StorageUser user, String filePath) {
-        // TODO Auto-generated method stub
+    public void removeFileAccessRights(String accessToken, String ownerId, String filePath, String kscurrUserId, Long BMUcurrUserId,
+            Long userToRemoveBMUUserId) throws IOException {
+        URI full = null;
+        try {
+            URI base = new URI(this.serviceUrl + FILE_RESOURCE_RIGHTS);
+            full = new URI(base.getScheme(), base.getAuthority(), base.getPath().replaceAll("//", "/") + "/" + ownerId + "/" + filePath,
+                    "accesstoken=" + accessToken + "&ksuserid=" + kscurrUserId + "&bmuuserid=" + BMUcurrUserId + "&bmuuseridtoremove="
+                            + userToRemoveBMUUserId, null);
+        } catch (URISyntaxException e) {
+            LOGGER.error("cannot parse uri", e);
+            throw new IOException(e);
+        }
+
+        HttpDelete httpDelete = new HttpDelete(full);
+        CloseableHttpResponse response = this.client.execute(httpDelete);
+
+        int status = response.getStatusLine().getStatusCode();
+        if (HttpStatus.SC_OK != status) {
+            LOGGER.error("Request failed with status code: " + status);
+            throw new IOException("Request failed with status code: " + status);
+        }
     }
 
     @Override

@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.backmeup.storage.model.Metadata;
-import org.backmeup.storage.model.StorageUser;
 
 public interface StorageClient {
     String authenticate(String username, String password) throws IOException;
@@ -26,8 +25,20 @@ public interface StorageClient {
      */
     void addFileAccessRights(String accessToken, String ownerId, String filePath,String kscurrUserId, Long BMUcurrUserId, 
             Long userToAddBMUUserId, String userToAddKSUserId) throws IOException;
-
-    void removeFileAccessRights(StorageUser user, String filePath);
+    
+    /**
+     * Current user with access rights on file revokes access for userToRemove on a given filePath within a given userspace 
+     * e.g. owner1/file1.xml
+     * @param accessToken access token of the current user
+     * @param ownerId the upserspace prefix to look up the file for
+     * @param filePath the file path within a given userspace
+     * @param kscurrUserId keyserverUserId of the current user
+     * @param BMUcurrUserId backmeupUserId of the current user
+     * @param userToRemoveBMUUserId backmeupUserId of the user to remove access rights for
+     * @throws IOException
+     */
+    void removeFileAccessRights(String accessToken, String ownerId, String filePath,String kscurrUserId, Long BMUcurrUserId, 
+            Long userToRemoveBMUUserId) throws IOException;
 
     /**
      * Takes a given filePath within a given userspace e.g. owner1/file1.xml and checks if a given currUser is allowed

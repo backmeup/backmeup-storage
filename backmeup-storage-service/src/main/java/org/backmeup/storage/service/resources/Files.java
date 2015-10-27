@@ -10,6 +10,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -124,26 +125,31 @@ public class Files {
         //current user grants access to file for userToAdd
         getStorageLogic().addFileAccessRights(userToAddBMUId, userIdToAddKSId, currUser, owner, filePath);
         return Response.ok().build();
-
     }
 
-    //TODO AL WICHTIG DELETE OPERATION GEHT VOM SHARING PARTNER ALS ACTIVE USER AUS!!!
+    @PermitAll
+    @DELETE
+    @Path("/rights/{owner:[^/]+}/{path:[^/]+.*}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response removeFileAccessRights(//
+            @PathParam("path") String filePath, //
+            @PathParam("owner") String owner,//
+            @QueryParam("accesstoken") String accessToken, //
+            @QueryParam("ksuserid") String currUserKSuserid,//
+            @QueryParam("bmuuserid") Long currUserBMUuserid,//
+            @QueryParam("bmuuseridtoremove") Long userToRemoveBMUId) throws IOException {
+        mandatory("path", filePath);
+        mandatory("owner", owner);
+        mandatory("accesstoken", accessToken);
+        mandatory("ksuserid", currUserKSuserid);
+        mandatory("bmuuserid", currUserBMUuserid);
+        mandatory("bmuuseridtoremove", userToRemoveBMUId);
 
-    /* @RolesAllowed(AuthRoles.USER)
-     @DELETE
-     @Path("/rights/{path:[^/]+.*}")
-     @Consumes(MediaType.APPLICATION_OCTET_STREAM)
-     @Produces(MediaType.APPLICATION_JSON)
-     public Response removeFileAccessRights(//
-             @PathParam("path") String filePath, //
-             @Context HttpServletRequest request,//
-             @Context SecurityContext securityContext)//
-             throws IOException {
-
-         StorageUser user = getUserFromContext(securityContext);
-
-         //TODO CONTINUE HERE
-     }*/
+        StorageUser currUser = getUserFromAccessToken(accessToken, currUserKSuserid, currUserBMUuserid);
+        //current user grants access to remove file access for userToRemove
+        getStorageLogic().removeFileAccessRights(userToRemoveBMUId, currUser, owner, filePath);
+        return Response.ok().build();
+    }
 
     @PermitAll
     @GET

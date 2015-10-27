@@ -68,7 +68,7 @@ public class DummyStorage implements StorageLogic {
     }
 
     @Override
-    public void removeFileAccessRights(Long userIdToRemove, String ksUserIdToRemove, StorageUser currUser, String owner, String filePath) {
+    public void removeFileAccessRights(Long userIdToRemove, StorageUser currUser, String owner, String filePath) {
         //not required without encryption
     }
 

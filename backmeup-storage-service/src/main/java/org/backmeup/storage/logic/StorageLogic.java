@@ -17,7 +17,7 @@ public interface StorageLogic {
 
     void addFileAccessRights(Long userIdToAdd, String ksUserIdToAdd, StorageUser currUser, String owner, String filePath);
 
-    void removeFileAccessRights(Long userIdToRemove, String ksUserIdToRemove, StorageUser currUser, String owner, String filePath);
+    void removeFileAccessRights(Long userIdToRemove, StorageUser currUser, String owner, String filePath);
 
     boolean hasFileAccessRights(Long userIdToCheck, String owner, String filePath);
 }
