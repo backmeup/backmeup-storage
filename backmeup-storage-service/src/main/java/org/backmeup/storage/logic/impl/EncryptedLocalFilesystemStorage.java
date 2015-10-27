@@ -204,7 +204,7 @@ public @Alternative class EncryptedLocalFilesystemStorage implements StorageLogi
             PrivateKey currUserPrivKey = this.getStorageUserKSPrivateKey(token);
             //load secret key into keystore = same for all users of this file
             ks.getSecretKey(currUser.getUserId() + "", currUserPrivKey);
-            //now add the additional user to the list of receivers
+            //now remove the additional user to the list of receivers
             ks.removeReceiver(bmuUserIdToRemove + "");
             //save keystore
             ((FileKeystore) ks).save();
