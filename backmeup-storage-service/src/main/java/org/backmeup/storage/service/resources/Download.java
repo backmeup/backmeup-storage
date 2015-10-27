@@ -26,10 +26,13 @@ import org.backmeup.storage.logic.StorageLogic;
 import org.backmeup.storage.model.StorageUser;
 import org.jboss.resteasy.core.Headers;
 import org.jboss.resteasy.core.ServerResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Path("/download")
 @RequestScoped
 public class Download {
+    private final Logger logger = LoggerFactory.getLogger(getClass());
     private static final ServerResponse ACCESS_DENIED = new ServerResponse("Access denied for this resource", 401, new Headers<>());
 
     @Inject
@@ -56,6 +59,7 @@ public class Download {
         StorageUser user = getUserFromAccessToken(accessToken);
 
         if (owner == null || owner.isEmpty()) {
+            this.logger.debug("bad request, owner is null or empty");
             throw new WebApplicationException(Status.BAD_REQUEST);
         }
 
@@ -83,6 +87,7 @@ public class Download {
 
     protected StorageUser getUserFromAccessToken(String accessToken) {
         if ("".equals(accessToken)) {
+            this.logger.debug("unable to retrieve StorageUser, invalid accessToken");
             throw new WebApplicationException(ACCESS_DENIED);
         }
 
@@ -94,6 +99,7 @@ public class Download {
             Long bmuUserId = this.userMappingClientFactory.getClient().getBMUUserID(ksUserId);
             return new StorageUser(bmuUserId, accessToken);
         } catch (Exception e) {
+            this.logger.debug("unable to validate token against keyserver", e);
             throw new WebApplicationException(ACCESS_DENIED);
         }
     }
