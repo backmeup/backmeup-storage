@@ -211,7 +211,19 @@ public class BackmeupStorageClient implements StorageClient {
         }
 
         HttpPost httpPost = new HttpPost(full);
-        CloseableHttpResponse response = this.client.execute(httpPost);
+        CloseableHttpClient myClient = createClient();
+        CloseableHttpResponse response = myClient.execute(httpPost);
+        try {
+            //
+        } catch (Exception e) {
+
+        } finally {
+            try {
+                response.close();
+                myClient.close();
+            } catch (IOException e) {
+            }
+        }
 
         int status = response.getStatusLine().getStatusCode();
         if (HttpStatus.SC_OK != status) {
@@ -236,12 +248,24 @@ public class BackmeupStorageClient implements StorageClient {
         }
 
         HttpDelete httpDelete = new HttpDelete(full);
-        CloseableHttpResponse response = this.client.execute(httpDelete);
+        CloseableHttpClient myClient = createClient();
+        CloseableHttpResponse response = myClient.execute(httpDelete);
 
         int status = response.getStatusLine().getStatusCode();
         if (HttpStatus.SC_OK != status) {
             LOGGER.error("Request failed with status code: " + status);
             throw new IOException("Request failed with status code: " + status);
+        }
+        try {
+            //
+        } catch (Exception e) {
+
+        } finally {
+            try {
+                response.close();
+                myClient.close();
+            } catch (IOException e) {
+            }
         }
     }
 
@@ -260,27 +284,33 @@ public class BackmeupStorageClient implements StorageClient {
         }
 
         HttpGet httpGet = new HttpGet(full);
-        //httpGet.addHeader("Authorization", accessToken);
-        CloseableHttpResponse response = this.client.execute(httpGet);
+
+        CloseableHttpClient myClient = createClient();
+        CloseableHttpResponse response = myClient.execute(httpGet);
 
         int status = response.getStatusLine().getStatusCode();
         if (HttpStatus.SC_OK != status) {
             LOGGER.error("Request failed with status code: " + status);
             throw new IOException("Request failed with status code: " + status);
         }
-
         try {
             HttpEntity respEntity = response.getEntity();
             ObjectMapper mapper = createJsonMapper();
             Boolean hasAccess = mapper.readValue(respEntity.getContent(), Boolean.class);
             // release all resources held by httpentity
             EntityUtils.consume(respEntity);
+            response.close();
+            myClient.close();
             return hasAccess;
         } catch (Exception e) {
             LOGGER.error("", e);
             throw new IOException(e);
         } finally {
-            response.close();
+            try {
+                response.close();
+                myClient.close();
+            } catch (IOException e) {
+            }
         }
     }
 
