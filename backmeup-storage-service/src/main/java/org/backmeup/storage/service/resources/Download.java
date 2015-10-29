@@ -1,5 +1,7 @@
 package org.backmeup.storage.service.resources;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -17,6 +19,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.commons.io.IOUtils;
 import org.backmeup.index.client.UserMappingClientFactory;
 import org.backmeup.keyserver.client.KeyserverClient;
 import org.backmeup.keyserver.model.Token.Kind;
@@ -68,11 +71,17 @@ public class Download {
             throw new WebApplicationException(Status.NOT_FOUND);
         }
 
-        java.nio.file.Path p = Paths.get(filePath);
         try {
+            java.nio.file.Path p = Paths.get(filePath);
             String mediaType = Files.probeContentType(p);
 
             if (mediaType == null) {
+                //try to probe the media type from a temp file
+                mediaType = probeInputStream(filePath, getStorageLogic().getFileAsInputStream(user, owner, filePath));
+            }
+
+            if (mediaType == null) {
+                //if still missing then set default
                 mediaType = MediaType.APPLICATION_OCTET_STREAM;
             }
 
@@ -83,6 +92,29 @@ public class Download {
         } catch (IOException e) {
             throw new WebApplicationException(Status.NOT_FOUND);
         }
+    }
+
+    /**
+     * Need to create a temporary file of the encrypted inputstream to properly probe the media's content-type
+     * 
+     * @param in
+     * @return
+     * @throws IOException
+     */
+    private String probeInputStream(String filePath, InputStream in) throws IOException {
+        String suffix = ".tmp";
+        if (filePath.lastIndexOf(".") > -1) {
+            suffix = filePath.substring(filePath.lastIndexOf("."), filePath.length());
+        }
+        final File tempFile = File.createTempFile(filePath, suffix);
+        tempFile.deleteOnExit();
+        try (FileOutputStream out = new FileOutputStream(tempFile)) {
+            IOUtils.copy(in, out);
+        }
+        java.nio.file.Path p = Paths.get(tempFile.getAbsolutePath());
+        String mediaType = Files.probeContentType(p);
+        tempFile.delete();
+        return mediaType;
     }
 
     protected StorageUser getUserFromAccessToken(String accessToken) {
