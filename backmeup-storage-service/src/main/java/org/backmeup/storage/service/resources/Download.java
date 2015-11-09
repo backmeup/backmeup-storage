@@ -73,7 +73,11 @@ public class Download {
 
         try {
             java.nio.file.Path p = Paths.get(filePath);
-            String mediaType = Files.probeContentType(p);
+            String mediaType = null;
+            try {
+                mediaType = Files.probeContentType(p);
+            } catch (Exception e) {
+            }
 
             if (mediaType == null) {
                 //try to probe the media type from a temp file
@@ -90,6 +94,7 @@ public class Download {
                     .type(mediaType)//
                     .build();
         } catch (IOException e) {
+            this.logger.debug("error returning file for download", e);
             throw new WebApplicationException(Status.NOT_FOUND);
         }
     }
